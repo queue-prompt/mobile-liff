@@ -418,6 +418,7 @@ export default {
         payload: false,
       });
       await this.reloadTimeSlot();
+      this.reserveTime = "";
     },
 
     classRowActive(tableRow, activeRow) {
