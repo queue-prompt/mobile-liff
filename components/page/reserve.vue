@@ -86,7 +86,7 @@
                     <td style="width: 8%">
                       <CheckBox
                         :checked="reserveTime == data.time"
-                        :isDisabled="data.open - data.reserve == 0"
+                        :isDisabled="data.open - data.reserve == 0 "
                       />
                     </td>
                     <td class="text-teft ml-0 pl-0">
@@ -210,20 +210,9 @@ export default {
     },
     calRestOfQueue(data, entityId, reserveDate) {
       const restOfQueue = data.open - data.reserve;
-      const localTimeSlots = localStorage.getItem('cacheTimeSlots');
-
-      let cacheEntity = ''
-      let cacheDate = ''
-      let cacheTime = ''
+      let localTimeSlots = localStorage.getItem(`t:${entityId}:${reserveDate}:${data.time}`);
 
       if(localTimeSlots) {
-        const localSplit = localTimeSlots.split(':')
-        cacheEntity = localSplit[1]
-        cacheDate = localSplit[2]
-        cacheTime = localSplit[3]
-      }
-
-      if(entityId == cacheEntity && reserveDate == cacheDate && cacheTime == data.time ) {
         return 'เต็ม'
       }
 

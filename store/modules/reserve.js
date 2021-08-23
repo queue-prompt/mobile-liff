@@ -135,9 +135,8 @@ const reserveModule = {
             commit('setState', { key: 'reserveQueue', payload: payloadReserve })
             commit('setState', { key: 'register', payload: registerPayload })
             localStorage.setItem(data.registerId, true)
+            localStorage.setItem(`r:${entityId}:${reserveQueue.date}`, true)
             localStorage.removeItem("form");
-            localStorage.removeItem("cacheTimeSlots");
-
             resolve(true)
           }
         }
@@ -148,7 +147,7 @@ const reserveModule = {
           commit('appState/setState', { key: 'isLoading', payload: false }, { root: true })
 
           if (error.response.status == 400 && error.response.data.errorMessage) {
-            localStorage.setItem('cacheTimeSlots', `t:${entityId}:${reserveQueue.date}:${reserveQueue.time}`)
+            localStorage.setItem(`t:${entityId}:${reserveQueue.date}:${reserveQueue.time}`, true)
             await alertError(error.response.data)
           }
 

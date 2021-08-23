@@ -58,7 +58,7 @@
                     </h4>
                   </div>
 
-                  <div class="card mt-3 card-border">
+                  <div class="card mt-3 card-border mb-0">
                     <div class="card-boby card-subtitle text-center p-2">
                       <p class="">
                         ตารางจองคิว <br />
@@ -76,6 +76,10 @@
                     </div>
                   </div>
                   <div class="form-group login-submit">
+                    <p class="text-secondary text-end font-" style="color: '#ccc'" v-if="prevReservedDate !== '' && canReserve">
+                      <em>( คุณได้จองคิว {{ prevReservedDate }} เรียบร้อยแล้ว )</em>
+                    </p>
+        
                     <h5 v-if="todayReserve && !entityShutdown" class="">
                       วันที่ {{ todayReserve.date | thaiDate }} :
 
@@ -139,7 +143,10 @@ export default {
     SplashFooter,
   },
   data() {
-    return { defaultLogo: false };
+    return { 
+      defaultLogo: false,
+      prevReservedDate: ''
+    };
   },
   computed: {
     ...mapState({
@@ -192,8 +199,26 @@ export default {
       return `${dd} ${MM[parseInt(mm)]} ${parseInt(yyyy) + 543}`;
     },
   },
-
+  watch: {
+    todayReserve(newData) {
+      if(newData) {
+        this.getPrevReserveData(newData)
+      }
+    }
+  },
+  mounted() {
+    if(this.todayReserve) {
+      this.getPrevReserveData(this.todayReserve)
+    }
+  },
   methods: {
+    getPrevReserveData(dateData) {
+      const dateLocalStorage = localStorage.getItem(`r:${this.entityId}:${dateData.date}`)
+      if(dateLocalStorage) {
+        const thaiDateFormat = this.$options.filters.thaiDate(dateData.date)
+        this.prevReservedDate = thaiDateFormat
+      }
+    },
     async next(page) {
       if (page == "register") {
         this.$store.commit("appState/setState", {
