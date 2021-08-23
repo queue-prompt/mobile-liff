@@ -136,6 +136,8 @@ const reserveModule = {
             commit('setState', { key: 'register', payload: registerPayload })
             localStorage.setItem(data.registerId, true)
             localStorage.removeItem("form");
+            localStorage.removeItem("cacheTimeSlots");
+
             resolve(true)
           }
         }
@@ -146,6 +148,7 @@ const reserveModule = {
           commit('appState/setState', { key: 'isLoading', payload: false }, { root: true })
 
           if (error.response.status == 400 && error.response.data.errorMessage) {
+            localStorage.setItem('cacheTimeSlots', `t:${entityId}:${reserveQueue.date}:${reserveQueue.time}`)
             await alertError(error.response.data)
           }
 

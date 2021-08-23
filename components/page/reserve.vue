@@ -93,7 +93,7 @@
                       {{ data.time | getFormatTime }}
                     </td>
                     <td class="text-center">
-                      <span class="bold em">{{ data | calRestOfQueue }} </span>
+                      <span class="bold em">{{ data | calRestOfQueue(entityIdVuex, reserveDate) }} </span>
                     </td>
                   </tr>
                 </tbody>
@@ -208,8 +208,24 @@ export default {
       if (!time) return "-";
       return formatTime(time);
     },
-    calRestOfQueue(data) {
+    calRestOfQueue(data, entityId, reserveDate) {
       const restOfQueue = data.open - data.reserve;
+      const localTimeSlots = localStorage.getItem('cacheTimeSlots');
+
+      let cacheEntity = ''
+      let cacheDate = ''
+      let cacheTime = ''
+
+      if(localTimeSlots) {
+        const localSplit = localTimeSlots.split(':')
+        cacheEntity = localSplit[1]
+        cacheDate = localSplit[2]
+        cacheTime = localSplit[3]
+      }
+
+      if(entityId == cacheEntity && reserveDate == cacheDate && cacheTime == data.time ) {
+        return 'เต็ม'
+      }
 
       if (restOfQueue > 0) {
         return restOfQueue;
@@ -266,7 +282,9 @@ export default {
         key: "isLoading",
         payload: true,
       });
+
       await this.$store.dispatch("reserve/getTimeSlots", this.reserveDate);
+      
       this.$store.commit("appState/setState", {
         key: "isLoading",
         payload: false,
@@ -400,7 +418,6 @@ export default {
         payload: false,
       });
       await this.reloadTimeSlot();
-      this.reserveTime = "";
     },
 
     classRowActive(tableRow, activeRow) {
