@@ -65,7 +65,7 @@
               <table
                 class="table mt-3"
                 style="font-size: 1.5rem; cursor: pointer"
-                v-if="timeslotList && timeslotList.length > 0"
+                v-if="timeslotList && timeslotList.length > 0 && !validateSameDate"
               >
                 <thead>
                   <tr>
@@ -406,6 +406,14 @@ export default {
         key: "isLoading",
         payload: false,
       });
+
+      const isSame = this.isReserveSameDate();
+      if (isSame) {
+        this.reserveTime = "";
+        this.validateReserve = false;
+        return;
+      }
+
       await this.reloadTimeSlot();
       this.reserveTime = "";
     },

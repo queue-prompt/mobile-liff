@@ -45,7 +45,7 @@ const reserveModule = {
           }
         }
         catch (error) {
-          console.log(error.response)
+          console.log(error)
           commit('appState/setState', { key: 'idToken', payload: '' }, { root: true })
           commit('appState/setState', { key: 'isLoading', payload: false }, { root: true })
           await alertError(errorServer)
@@ -142,13 +142,21 @@ const reserveModule = {
         }
 
         catch (error) {
-          console.log(error.response)
+          console.log(error)
           commit('setState', { key: 'register', payload: {} })
           commit('appState/setState', { key: 'isLoading', payload: false }, { root: true })
 
           if (error.response.status == 400 && error.response.data.errorMessage) {
-            localStorage.setItem(`t:${entityId}:${reserveQueue.date}:${reserveQueue.time}`, true)
-            await alertError(error.response.data)
+            const errorResponse = error.response.data
+            
+            if(errorResponse.status == 'full') {
+              localStorage.setItem(`t:${entityId}:${reserveQueue.date}:${reserveQueue.time}`, true)
+            }
+
+            if(errorResponse.status == 'already_register') {
+              localStorage.setItem(`${entityId}:${reserveQueue.date}:${userId}`, true)
+            }
+            await alertError(errorResponse)
           }
 
           if (error.response.status > 400) {
