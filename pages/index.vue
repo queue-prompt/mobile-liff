@@ -76,8 +76,8 @@
                     </div>
                   </div>
                   <div class="form-group login-submit">
-                    <p class="text-secondary text-end font-" style="color: '#ccc'" v-if="prevReservedDate !== '' && canReserve">
-                      <em>( คุณได้จองคิว {{ prevReservedDate }} เรียบร้อยแล้ว )</em>
+                    <p class="text-secondary text-end font-" style="color: '#ccc'" v-if="isReserved && canReserve">
+                      <em>( ระบบจะอัพเดตทุก 5 นาที )</em> 
                     </p>
         
                     <h5 v-if="todayReserve && !entityShutdown" class="">
@@ -145,7 +145,7 @@ export default {
   data() {
     return { 
       defaultLogo: false,
-      prevReservedDate: ''
+      isReserved: false
     };
   },
   computed: {
@@ -215,8 +215,7 @@ export default {
     getPrevReserveData(dateData) {
       const dateLocalStorage = localStorage.getItem(`r:${this.entityId}:${dateData.date}`)
       if(dateLocalStorage) {
-        const thaiDateFormat = this.$options.filters.thaiDate(dateData.date)
-        this.prevReservedDate = thaiDateFormat
+        this.isReserved = true
       }
     },
     async next(page) {
