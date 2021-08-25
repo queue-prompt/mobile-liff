@@ -77,6 +77,22 @@
               </div>
 
               <div class="col-12 mt-5">
+                <div class="form-group row pt-0 pb-0">
+                  <label class="col-12 mb-1 col-form-label form-label">ชนิดเลขระบุตัวตน</label>
+                  <div class="col-12 mt-1">
+                    <div class="form-group mb-0">
+                      <label class="custom-control custom-radio custom-control-inline">
+                        <input class="custom-control-input " type="radio" name="radioStateColor3" :checked="typeIdNumber == 'idCardNumber'" @change="selectTypeIdNumber('idCardNumber')"><span class="custom-control-label custom-control-color fs-5">บัตรประชาชน</span>
+                      </label>
+                      <label class="custom-control custom-radio custom-control-inline">
+                        <input class="custom-control-input" type="radio" name="radioStateColor3" :checked="typeIdNumber == 'passportNumber'" @change="selectTypeIdNumber('passportNumber')"><span class="custom-control-label custom-control-color fs-5">Passport</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 mt-4" v-if="typeIdNumber == 'idCardNumber'">
                 <label for="input-idCardNumber" class="form-label"
                   >เลขบัตรประชาชน (ไม่ต้องขีด)
                 </label>
@@ -95,6 +111,22 @@
                 <p class="text-danger ps-1" v-if="!validId">
                   เลขบัตรประชาชนผิด กรุณากรอกใหม่
                 </p>
+              </div>
+
+              <div class="col-12 mt-5" v-if="typeIdNumber == 'passportNumber'">
+                <label for="input-passportNumber" class="form-label"
+                  >เลขหนังสือเดินทาง
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="input-passportNumber"
+                  v-model="idCardNumber"
+                  autocomplete="off"
+                  @input="setFieldLocalStorage"
+                  placeholder="กรอกเลขหนังสือเดินทาง"
+                  required
+                />
               </div>
 
               <div class="col-12 mt-5">
@@ -309,7 +341,7 @@ export default {
     next: { type: Function, required: true },
   },
   components: {
-    ComfirmComponent,
+    ComfirmComponent, 
   },
   computed: {
     userFormVuex() {
@@ -363,6 +395,7 @@ export default {
       dateList: [],
       monthList: [],
       yearList: [],
+      typeIdNumber: 'idCardNumber',
       prefix: "",
       firstName: "",
       lastName: "",
@@ -383,6 +416,11 @@ export default {
       let obj = JSON.parse(MOCK);
       this.restoreForm(obj);
     },
+    selectTypeIdNumber(type) {
+      this.idCardNumber = ''
+      this.typeIdNumber = type
+      this.setFieldLocalStorage()
+    },
     checkSelectInitState(field) {
       return this[field] == "" ? true : false;
     },
@@ -399,6 +437,7 @@ export default {
         confirmMobile: this.mobile,
         gender: this.gender,
         province: this.province,
+        typeIdNumber: this.typeIdNumber
       };
       if (process.browser) {
         localStorage.setItem("form", JSON.stringify(formPayload));
@@ -416,6 +455,7 @@ export default {
         year,
         month,
         date,
+        typeIdNumber
       } = form;
       this.prefix = prefix;
       this.firstName = firstName;
@@ -428,6 +468,7 @@ export default {
       this.confirmMobile = mobile;
       this.gender = gender;
       this.province = province;
+      this.typeIdNumber = typeIdNumber
     },
     selectForm(event, type) {
       const value = event.target.value;
@@ -571,6 +612,12 @@ export default {
   background-image: inherit !important;
   box-shadow: inherit !important;
 }
+
+.was-validated .custom-control-input:valid ~ .custom-control-label, 
+.custom-control-input.is-valid ~ .custom-control-label {
+  color: inherit; 
+}
+
 .form-label {
   font-size: 1.3rem;
   margin-top: 1.1rem;
@@ -603,4 +650,9 @@ textarea.form-control {
 label {
   color: #333;
 }
+
+.custom-radio .custom-control-input:checked ~ .custom-control-label::after {
+  content: url('/icons/circle.svg');
+}
+
 </style>

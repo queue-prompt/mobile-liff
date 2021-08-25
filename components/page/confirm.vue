@@ -21,7 +21,7 @@
 
 
             <div class="mb-3">
-              <p class="text-secondary mb-0">เลขบัตรประชาชน</p>
+              <p class="text-secondary mb-0">{{ typeIdNumber }}</p>
               <p>{{ userFormVuex.idCardNumber }}</p>
             </div>
 
@@ -64,6 +64,22 @@ import { monthList } from '../../static/birthDate'
         const newFormat = `${dateSplit[2]} ${monthName[0].name} ${dateSplit[0]}`
 
         return newFormat
+      }
+    },
+    mounted() {
+      const getFormLocal = JSON.parse(localStorage.getItem('form'))
+
+      if(getFormLocal.typeIdNumber == 'idCardNumber') {
+        return this.typeIdNumber = 'เลขบัตรประชาชน'
+      }
+
+      if(getFormLocal.typeIdNumber == 'passportNumber') {
+        return this.typeIdNumber = 'เลขหนังสือเดินทาง'
+      } 
+    },
+    data() {
+      return {
+        typeIdNumber: ''
       }
     },
 
