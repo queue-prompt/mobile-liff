@@ -78,9 +78,9 @@
 
               <div class="col-12 mt-5">
                 <div class="form-group row pt-0 pb-0">
-                  <label class="col-12 mb-1 col-form-label form-label">ชนิดเลขระบุตัวตน</label>
+                  <label class="col-12 mb-2 col-form-label form-label">ชนิดเลขระบุตัวตน</label>
                   <div class="col-12 mt-1">
-                    <div class="form-group mb-0">
+                    <div class="form-group mb-0 d-flex justify-content-around">
                       <label class="custom-control custom-radio custom-control-inline">
                         <input class="custom-control-input " type="radio" name="radioStateColor3" :checked="typeIdNumber == 'idCardNumber'" @change="selectTypeIdNumber('idCardNumber')"><span class="custom-control-label custom-control-color fs-5">บัตรประชาชน</span>
                       </label>
@@ -115,7 +115,7 @@
 
               <div class="col-12 mt-5" v-if="typeIdNumber == 'passportNumber'">
                 <label for="input-passportNumber" class="form-label"
-                  >เลขหนังสือเดินทาง
+                  >Passport No.
                 </label>
                 <input
                   type="text"
@@ -124,7 +124,7 @@
                   v-model="idCardNumber"
                   autocomplete="off"
                   @input="setFieldLocalStorage"
-                  placeholder="กรอกเลขหนังสือเดินทาง"
+                  placeholder="Passport No."
                   required
                 />
               </div>
@@ -652,7 +652,7 @@ label {
 }
 
 .custom-radio .custom-control-input:checked ~ .custom-control-label::after {
-  content: url('/icons/circle.svg');
+  content: url('/icons/check_white.svg');
 }
 
 </style>

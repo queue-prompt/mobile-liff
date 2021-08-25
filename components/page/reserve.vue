@@ -106,7 +106,7 @@
             <div class="row">
               <div class="col">
                 <button
-                  class="btn btn-primary btn-lg w-100"
+                  class="btn btn-primary btn-xl w-100"
                   @click="openModalConfirm"
                   :disabled="!canReserve"
                 >
