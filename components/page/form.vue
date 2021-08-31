@@ -425,7 +425,7 @@ export default {
       monthList: [],
       yearList: [],
       typeIdNumber: 'idCardNumber',
-      groupOf: '',
+      groupOf: 'ทั่วไป',
       prefix: "",
       firstName: "",
       lastName: "",
