@@ -48,7 +48,7 @@
               <div class="input-group mb-3">
                 <input
                   class="form-control"
-                  type="number"
+                  type="text"
                   placeholder="เลขบัตรประชาชน(ไม่ต้องขีด)"
                   v-model="searchString"
                   @change="inputSearch"

@@ -18,6 +18,35 @@
               novalidate
               @submit.prevent="submit"
             >
+
+              <div class="col-12">
+                <label for="input-prefix" class="form-label">ท่านจัดอยู่ในกลุ่มใด</label>
+
+                <div class="form-group row pt-1 pb-1">
+                  <div class="col-12 mt-1">
+                    <label class="custom-control custom-radio text-wrap">
+                      <input class="custom-control-input" type="radio" name="radio-stacked" :checked="groupOf == 'สูงอายุ'"  @change="selectGroupOfPerson('สูงอายุ')">
+                      <span class="custom-control-label custom-control-color fs-5">กลุ่ม 1 ผู้มีอายุ 60 ปีขึ้นไป</span>
+                    </label>
+                    <label class="custom-control custom-radio text-wrap">
+                      <input class="custom-control-input" type="radio" name="radio-stacked" :checked="groupOf == '7โรคเรื้อรัง'" @change="selectGroupOfPerson('7โรคเรื้อรัง')">
+                      <span class="custom-control-label custom-control-color fs-5">กลุ่ม 2 บุคคลที่มีโรคประจำตัว 7 กลุ่มโรค</span>
+                      <div class="ml-2 fst-italic text-break">
+                        <span style="color: #aaa;">โรคทางเดินหายใจเรื้อรัง, โรคไตวายเรื้อรัง, โรคหัวใจและหลอดเลือด, โรคมะเร็งและภาวะภูมิคุ้มกันต่ำ, โรคหลอดเลือดสมอง, โรคเบาหวาน, โรคอ้วน</span>
+                      </div>
+                    </label>
+                    <label class="custom-control custom-radio text-wrap">
+                      <input class="custom-control-input" type="radio" name="radio-stacked" :checked="groupOf == 'ตั้งครรภ์'" @change="selectGroupOfPerson('ตั้งครรภ์')">
+                      <span class="custom-control-label custom-control-color fs-5">กลุ่ม 3 ผู้ที่ตั้งครรภ์ อายุเกิน 12 สัปดาห์</span>
+                    </label>
+                    <label class="custom-control custom-radio text-wrap">
+                      <input class="custom-control-input" type="radio" name="radio-stacked" :checked="groupOf == 'ทั่วไป'" @change="selectGroupOfPerson('ทั่วไป')">
+                      <span class="custom-control-label custom-control-color fs-5">กลุ่ม 4 ประชาชนทั่วไป (นอกเหนือกลุ่มที่ 1, 2 และ 3) </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
               <div class="col-12">
                 <label for="input-prefix" class="form-label"
                   >คำนำหน้าชื่อ</label
@@ -77,6 +106,22 @@
               </div>
 
               <div class="col-12 mt-5">
+                <div class="form-group row pt-0 pb-0">
+                  <label class="col-12 mb-2 col-form-label form-label">ชนิดเลขระบุตัวตน</label>
+                  <div class="col-12 mt-1">
+                    <div class="form-group mb-0 d-flex justify-content-around">
+                      <label class="custom-control custom-radio custom-control-inline">
+                        <input class="custom-control-input " type="radio" name="typeIdCard" :checked="typeIdNumber == 'idCardNumber'" @change="selectTypeIdNumber('idCardNumber')"><span class="custom-control-label custom-control-color fs-5">บัตรประชาชน</span>
+                      </label>
+                      <label class="custom-control custom-radio custom-control-inline">
+                        <input class="custom-control-input" type="radio" name="typeIdCard" :checked="typeIdNumber == 'passportNumber'" @change="selectTypeIdNumber('passportNumber')"><span class="custom-control-label custom-control-color fs-5">Passport</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 mt-4" v-if="typeIdNumber == 'idCardNumber'">
                 <label for="input-idCardNumber" class="form-label"
                   >เลขบัตรประชาชน (ไม่ต้องขีด)
                 </label>
@@ -95,6 +140,22 @@
                 <p class="text-danger ps-1" v-if="!validId">
                   เลขบัตรประชาชนผิด กรุณากรอกใหม่
                 </p>
+              </div>
+
+              <div class="col-12 mt-5" v-if="typeIdNumber == 'passportNumber'">
+                <label for="input-passportNumber" class="form-label"
+                  >Passport No.
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="input-passportNumber"
+                  v-model="idCardNumber"
+                  autocomplete="off"
+                  @input="setFieldLocalStorage"
+                  placeholder="Passport No."
+                  required
+                />
               </div>
 
               <div class="col-12 mt-5">
@@ -309,7 +370,7 @@ export default {
     next: { type: Function, required: true },
   },
   components: {
-    ComfirmComponent,
+    ComfirmComponent, 
   },
   computed: {
     userFormVuex() {
@@ -363,6 +424,8 @@ export default {
       dateList: [],
       monthList: [],
       yearList: [],
+      typeIdNumber: 'idCardNumber',
+      groupOf: '',
       prefix: "",
       firstName: "",
       lastName: "",
@@ -383,11 +446,29 @@ export default {
       let obj = JSON.parse(MOCK);
       this.restoreForm(obj);
     },
+    selectForm(event, type) {
+      const value = event.target.value;
+      this[type] = value;
+      if (type == "prefix") {
+        this.getGenderByPrefix();
+      }
+      this.setFieldLocalStorage();
+    },
+    selectGroupOfPerson(type) {
+      this.groupOf = type
+      this.setFieldLocalStorage()
+    },
+    selectTypeIdNumber(type) {
+      this.idCardNumber = ''
+      this.typeIdNumber = type
+      this.setFieldLocalStorage()
+    },
     checkSelectInitState(field) {
       return this[field] == "" ? true : false;
     },
     setFieldLocalStorage() {
       const formPayload = {
+        groupOf: this.groupOf,
         prefix: this.prefix,
         firstName: this.firstName,
         lastName: this.lastName,
@@ -399,6 +480,7 @@ export default {
         confirmMobile: this.mobile,
         gender: this.gender,
         province: this.province,
+        typeIdNumber: this.typeIdNumber
       };
       if (process.browser) {
         localStorage.setItem("form", JSON.stringify(formPayload));
@@ -406,6 +488,7 @@ export default {
     },
     restoreForm(form) {
       const {
+        groupOf,
         prefix,
         firstName,
         lastName,
@@ -416,7 +499,10 @@ export default {
         year,
         month,
         date,
+        typeIdNumber
       } = form;
+
+      this.groupOf = groupOf
       this.prefix = prefix;
       this.firstName = firstName;
       this.lastName = lastName;
@@ -428,14 +514,7 @@ export default {
       this.confirmMobile = mobile;
       this.gender = gender;
       this.province = province;
-    },
-    selectForm(event, type) {
-      const value = event.target.value;
-      this[type] = value;
-      if (type == "prefix") {
-        this.getGenderByPrefix();
-      }
-      this.setFieldLocalStorage();
+      this.typeIdNumber = typeIdNumber
     },
     getGenderByPrefix() {
       const maleList = ["นาย", "เด็กชาย"];
@@ -503,6 +582,7 @@ export default {
         this.month
       }-${tranformMonth}`;
       const payload = {
+        groupOf: this.groupOf,
         prefix: this.prefix,
         firstName: this.firstName,
         lastName: this.lastName,
@@ -571,6 +651,12 @@ export default {
   background-image: inherit !important;
   box-shadow: inherit !important;
 }
+
+.was-validated .custom-control-input:valid ~ .custom-control-label, 
+.custom-control-input.is-valid ~ .custom-control-label {
+  color: inherit; 
+}
+
 .form-label {
   font-size: 1.3rem;
   margin-top: 1.1rem;
@@ -603,4 +689,9 @@ textarea.form-control {
 label {
   color: #333;
 }
+
+.custom-radio .custom-control-input:checked ~ .custom-control-label::after {
+  content: url('/icons/check_white.svg');
+}
+
 </style>
