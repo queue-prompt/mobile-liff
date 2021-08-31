@@ -18,6 +18,35 @@
               novalidate
               @submit.prevent="submit"
             >
+
+              <div class="col-12">
+                <label for="input-prefix" class="form-label">ท่านจัดอยู่ในกลุ่มใด</label>
+
+                <div class="form-group row pt-1 pb-1">
+                  <div class="col-12 mt-1">
+                    <label class="custom-control custom-radio text-wrap">
+                      <input class="custom-control-input" type="radio" name="radio-stacked" :checked="groupOf == 'สูงอายุ'"  @change="selectGroupOfPerson('สูงอายุ')">
+                      <span class="custom-control-label custom-control-color fs-5">กลุ่ม 1 ผู้มีอายุ 60 ปีขึ้นไป</span>
+                    </label>
+                    <label class="custom-control custom-radio text-wrap">
+                      <input class="custom-control-input" type="radio" name="radio-stacked" :checked="groupOf == '7โรคเรื้อรัง'" @change="selectGroupOfPerson('7โรคเรื้อรัง')">
+                      <span class="custom-control-label custom-control-color fs-5">กลุ่ม 2 บุคคลที่มีโรคประจำตัว 7 กลุ่มโรค</span>
+                      <div class="ml-2 fst-italic text-break">
+                        <span style="color: #aaa;">โรคทางเดินหายใจเรื้อรัง, โรคไตวายเรื้อรัง, โรคหัวใจและหลอดเลือด, โรคมะเร็งและภาวะภูมิคุ้มกันต่ำ, โรคหลอดเลือดสมอง, โรคเบาหวาน, โรคอ้วน</span>
+                      </div>
+                    </label>
+                    <label class="custom-control custom-radio text-wrap">
+                      <input class="custom-control-input" type="radio" name="radio-stacked" :checked="groupOf == 'ตั้งครรภ์'" @change="selectGroupOfPerson('ตั้งครรภ์')">
+                      <span class="custom-control-label custom-control-color fs-5">กลุ่ม 3 ผู้ที่ตั้งครรภ์ อายุเกิน 12 สัปดาห์</span>
+                    </label>
+                    <label class="custom-control custom-radio text-wrap">
+                      <input class="custom-control-input" type="radio" name="radio-stacked" :checked="groupOf == 'ทั่วไป'" @change="selectGroupOfPerson('ทั่วไป')">
+                      <span class="custom-control-label custom-control-color fs-5">กลุ่ม 4 ประชาชนทั่วไป (นอกเหนือกลุ่มที่ 1, 2 และ 3) </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
               <div class="col-12">
                 <label for="input-prefix" class="form-label"
                   >คำนำหน้าชื่อ</label
@@ -82,10 +111,10 @@
                   <div class="col-12 mt-1">
                     <div class="form-group mb-0 d-flex justify-content-around">
                       <label class="custom-control custom-radio custom-control-inline">
-                        <input class="custom-control-input " type="radio" name="radioStateColor3" :checked="typeIdNumber == 'idCardNumber'" @change="selectTypeIdNumber('idCardNumber')"><span class="custom-control-label custom-control-color fs-5">บัตรประชาชน</span>
+                        <input class="custom-control-input " type="radio" name="typeIdCard" :checked="typeIdNumber == 'idCardNumber'" @change="selectTypeIdNumber('idCardNumber')"><span class="custom-control-label custom-control-color fs-5">บัตรประชาชน</span>
                       </label>
                       <label class="custom-control custom-radio custom-control-inline">
-                        <input class="custom-control-input" type="radio" name="radioStateColor3" :checked="typeIdNumber == 'passportNumber'" @change="selectTypeIdNumber('passportNumber')"><span class="custom-control-label custom-control-color fs-5">Passport</span>
+                        <input class="custom-control-input" type="radio" name="typeIdCard" :checked="typeIdNumber == 'passportNumber'" @change="selectTypeIdNumber('passportNumber')"><span class="custom-control-label custom-control-color fs-5">Passport</span>
                       </label>
                     </div>
                   </div>
@@ -396,6 +425,7 @@ export default {
       monthList: [],
       yearList: [],
       typeIdNumber: 'idCardNumber',
+      groupOf: '',
       prefix: "",
       firstName: "",
       lastName: "",
@@ -416,6 +446,18 @@ export default {
       let obj = JSON.parse(MOCK);
       this.restoreForm(obj);
     },
+    selectForm(event, type) {
+      const value = event.target.value;
+      this[type] = value;
+      if (type == "prefix") {
+        this.getGenderByPrefix();
+      }
+      this.setFieldLocalStorage();
+    },
+    selectGroupOfPerson(type) {
+      this.groupOf = type
+      this.setFieldLocalStorage()
+    },
     selectTypeIdNumber(type) {
       this.idCardNumber = ''
       this.typeIdNumber = type
@@ -426,6 +468,7 @@ export default {
     },
     setFieldLocalStorage() {
       const formPayload = {
+        groupOf: this.groupOf,
         prefix: this.prefix,
         firstName: this.firstName,
         lastName: this.lastName,
@@ -445,6 +488,7 @@ export default {
     },
     restoreForm(form) {
       const {
+        groupOf,
         prefix,
         firstName,
         lastName,
@@ -457,6 +501,8 @@ export default {
         date,
         typeIdNumber
       } = form;
+
+      this.groupOf = groupOf
       this.prefix = prefix;
       this.firstName = firstName;
       this.lastName = lastName;
@@ -469,14 +515,6 @@ export default {
       this.gender = gender;
       this.province = province;
       this.typeIdNumber = typeIdNumber
-    },
-    selectForm(event, type) {
-      const value = event.target.value;
-      this[type] = value;
-      if (type == "prefix") {
-        this.getGenderByPrefix();
-      }
-      this.setFieldLocalStorage();
     },
     getGenderByPrefix() {
       const maleList = ["นาย", "เด็กชาย"];
@@ -544,6 +582,7 @@ export default {
         this.month
       }-${tranformMonth}`;
       const payload = {
+        groupOf: this.groupOf,
         prefix: this.prefix,
         firstName: this.firstName,
         lastName: this.lastName,
