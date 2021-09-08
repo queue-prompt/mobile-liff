@@ -29,25 +29,20 @@
                 <h3 class="">
                   {{ organizationData.organization }}
                 </h3>
-                <!-- <h5 class="card-subtitle">
-                  {{
-                    organizationData.location &&
-                    organizationData.location.address
-                  }}
-                </h5> -->
               </div>
+
               <div class="card-body">
                 <form class="">
                   <div class="row text-center">
-                    <!-- <h1 class="display-5">ระบบลงทะเบียน</h1>
-                    <h1 class="display-5 my-5">
-                      {{ "ตรวจโควิด" || organizationData.type | getEventType }}
-                    </h1> -->
-
-                    <h3 class="">ระบบลงทะเบียนจองคิว</h3>
-                    <h3 class="">
+                    <h3>ระบบลงทะเบียนจองคิว</h3>
+                    <h3 v-if="organizationData.type == '100' || organizationData.type == '200'">
                       {{ organizationData.type | getEventType }}
                     </h3>
+
+                    <h3 v-else>
+                      {{ organizationData.type }}
+                    </h3>
+
 
                     <h4 class="">
                       {{
@@ -76,14 +71,14 @@
                     </div>
                   </div>
                   <div class="form-group login-submit">
-                    <p class="text-secondary text-end font-" style="color: '#ccc'" v-if="isReserved && canReserve">
+                    <p class="text-secondary text-end" style="color: '#ccc'" v-if="isReserved && canReserve">
                       <em>( ระบบจะอัพเดตทุก 5 นาที )</em> 
                     </p>
         
-                    <h5 v-if="todayReserve && !entityShutdown" class="">
-                      วันที่ {{ todayReserve.date | thaiDate }} :
+                    <h5 v-if="todayReserve && !entityShutdown">
+                      วันที่ {{ todayReserve.date | thaiDate }}:
 
-                      <span class="ml-2"
+                      <span class="ml-1"
                         >เปิดรับ {{ todayReserve.open }} คิว</span
                       >
                       <span class="float-right"
@@ -113,8 +108,7 @@
                       @click="next('dashboard')"
                     >
                       สถานที่ที่เปิดให้บริการ
-                    </button>
-   -->
+                    </button> -->
                     <button
                       type="button"
                       class="btn btn-secondary mt-3"
@@ -175,7 +169,7 @@ export default {
           return "ฉีดวัคซีนโควิด-19";
 
         default:
-          return "ตรวจโควิด-19";
+          return "-";
       }
     },
     thaiDate(yyyymmdd) {
