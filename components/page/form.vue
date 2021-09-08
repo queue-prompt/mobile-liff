@@ -3,7 +3,6 @@
     <div class="card">
       <div class="card-header card-header-divider">
         ข้อมูลผู้ใช้บริการ
-        <!-- <span class="card-subtitle">Card subtitle description</span> -->
       </div>
       <div class="card-body">
         <div class="row">
@@ -19,7 +18,7 @@
               @submit.prevent="submit"
             >
 
-              <div class="col-12">
+              <div class="col-12" v-if="organizationForCovid">
                 <label for="input-prefix" class="form-label">ท่านจัดอยู่ในกลุ่มใด</label>
 
                 <div class="form-group row pt-1 pb-1">
@@ -105,7 +104,7 @@
                 <div class="invalid-feedback">กรุณากรอกนามสกุล</div>
               </div>
 
-              <div class="col-12 mt-5">
+              <div class="col-12 mt-5" v-if="organizationForCovid">
                 <div class="form-group row pt-0 pb-0">
                   <label class="col-12 mb-2 col-form-label form-label">ชนิดเลขระบุตัวตน</label>
                   <div class="col-12 mt-1">
@@ -142,7 +141,7 @@
                 </p>
               </div>
 
-              <div class="col-12 mt-5" v-if="typeIdNumber == 'passportNumber'">
+              <div class="col-12 mt-5" v-if="typeIdNumber == 'passportNumber' && organizationForCovid">
                 <label for="input-passportNumber" class="form-label"
                   >Passport No.
                 </label>
@@ -376,6 +375,20 @@ export default {
     userFormVuex() {
       return this.$store.state.appState.user;
     },
+    organizationForCovid() {
+      const organizationData = this.$store.state.appState.organizationData
+
+      switch (organizationData.type) {
+        case '100':
+          return true
+
+        case '200':
+          return true
+          
+        default:
+          return false
+      }
+    },
     compairMobile() {
       return this.mobile == this.confirmMobile;
     },
@@ -425,7 +438,7 @@ export default {
       monthList: [],
       yearList: [],
       typeIdNumber: 'idCardNumber',
-      groupOf: '',
+      groupOf: 'ทั่วไป',
       prefix: "",
       firstName: "",
       lastName: "",
