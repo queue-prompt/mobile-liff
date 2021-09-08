@@ -19,7 +19,7 @@
               @submit.prevent="submit"
             >
 
-              <div class="col-12">
+              <!-- <div class="col-12">
                 <label for="input-prefix" class="form-label">ท่านจัดอยู่ในกลุ่มใด</label>
 
                 <div class="form-group row pt-1 pb-1">
@@ -45,7 +45,7 @@
                     </label>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <div class="col-12">
                 <label for="input-prefix" class="form-label"
@@ -105,7 +105,7 @@
                 <div class="invalid-feedback">กรุณากรอกนามสกุล</div>
               </div>
 
-              <div class="col-12 mt-5">
+              <!-- <div class="col-12 mt-5">
                 <div class="form-group row pt-0 pb-0">
                   <label class="col-12 mb-2 col-form-label form-label">ชนิดเลขระบุตัวตน</label>
                   <div class="col-12 mt-1">
@@ -119,7 +119,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <div class="col-12 mt-4" v-if="typeIdNumber == 'idCardNumber'">
                 <label for="input-idCardNumber" class="form-label"
@@ -142,7 +142,7 @@
                 </p>
               </div>
 
-              <div class="col-12 mt-5" v-if="typeIdNumber == 'passportNumber'">
+              <!-- <div class="col-12 mt-5" v-if="typeIdNumber == 'passportNumber'">
                 <label for="input-passportNumber" class="form-label"
                   >Passport No.
                 </label>
@@ -156,7 +156,7 @@
                   placeholder="Passport No."
                   required
                 />
-              </div>
+              </div> -->
 
               <div class="col-12 mt-5">
                 <div class="row">
