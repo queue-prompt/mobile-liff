@@ -196,7 +196,7 @@ export default {
       }
 
       if(reserveMode == 1) {
-        return dataReserveList
+        return _.take(dataReserveList, 30)
       }
     },
     canReserve() {

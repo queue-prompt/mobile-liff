@@ -38,11 +38,6 @@
               <p class="text-secondary mb-0">เบอร์โทรศัพท์</p>
               <p>{{ userFormVuex.mobile }}</p>
             </div>
-
-            <div class="mb-3">
-              <p class="text-secondary mb-0">จังหวัด</p>
-              <p>{{ userFormVuex.province }}</p>
-            </div>
           </div>
         </div>
       </div>

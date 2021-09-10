@@ -273,35 +273,6 @@
               </div>
 
               <div class="col-12 mt-5">
-                <div class="row mt-2">
-                  <div class="col-12">
-                    <label for="input-province" class="form-label"
-                      >จังหวัดที่อาศัยอยู่ปัจจุบัน</label
-                    >
-                    <select
-                      class="form-select form-select-lg"
-                      id="input-province"
-                      @change="(e) => selectForm(e, 'province')"
-                      v-model="province"
-                      required
-                    >
-                      <option selected disabled>กรุณาเลือกจังหวัด</option>
-                      <option
-                        v-for="(province, index) in provinceList"
-                        :key="index"
-                        :value="province"
-                      >
-                        {{ province }}
-                      </option>
-                    </select>
-                    <div class="invalid-feedback">
-                      กรุณาเลือกจังหวัดที่อาศัยอยู่ปัจจุบัน
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-12 mt-5">
                 <div class="d-grid gap-2 mt-3">
                   <!-- <button class="my-3" @click="mock" v-if="isDebug">
                     mock
@@ -357,7 +328,6 @@
 
 <script>
 import _ from "lodash-core";
-import provinceList from "../../static/province";
 import { dateList, monthList, yearList } from "../../static/birthDate";
 import prefixList from "../../static/prefix";
 import ComfirmComponent from "./confirm.vue";
@@ -396,7 +366,6 @@ export default {
       if (this.prefix == "") return false;
       if (this.firstName == "") return false;
       if (this.lastName == "") return false;
-      if (this.province == "") return false;
       if (this.year == "") return false;
       if (this.month == "") return false;
       if (this.date == "") return false;
@@ -423,7 +392,7 @@ export default {
     this.dateList = dateList;
     this.monthList = monthList;
     this.yearList = yearList;
-    this.provinceList = provinceList;
+    this.typeIdNumber = 'idCardNumber';
     this.prefixList = prefixList;
     this.idCardNumberState = "start";
     this.validateInputForm();
@@ -433,7 +402,6 @@ export default {
       activeModal: false,
       idCardNumberState: "start", // start, done
       prefixList: [],
-      provinceList: [],
       dateList: [],
       monthList: [],
       yearList: [],
@@ -442,7 +410,6 @@ export default {
       prefix: "",
       firstName: "",
       lastName: "",
-      province: "",
       year: "",
       month: "",
       date: "",
@@ -492,7 +459,6 @@ export default {
         mobile: this.mobile,
         confirmMobile: this.mobile,
         gender: this.gender,
-        province: this.province,
         typeIdNumber: this.typeIdNumber
       };
       if (process.browser) {
@@ -508,7 +474,6 @@ export default {
         idCardNumber,
         mobile,
         gender,
-        province,
         year,
         month,
         date,
@@ -526,8 +491,6 @@ export default {
       this.mobile = mobile;
       this.confirmMobile = mobile;
       this.gender = gender;
-      this.province = province;
-      this.typeIdNumber = typeIdNumber
     },
     getGenderByPrefix() {
       const maleList = ["นาย", "เด็กชาย"];
@@ -604,7 +567,6 @@ export default {
         birthDate: birthDate,
         mobile: this.mobile,
         gender: this.gender,
-        province: this.province,
       };
       this.$store.commit("appState/setState", {
         key: "user",
