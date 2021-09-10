@@ -6,7 +6,6 @@ function formatDate(date) {
 
   let monthName = _.filter(monthList, { monthId: dateSplit[1] })
   monthName = monthName[0].name
-
   const parseDay = parseInt(dateSplit[2])
   const yearTh = parseInt(dateSplit[0]) + 543
   const newFormat = `${parseDay} ${monthName} ${yearTh}`

@@ -15,8 +15,8 @@
       <div class="card-body">
         <div class="row">
           <div class="col-12" style="min-height: 65vh; height: auto">
-            <div class="">
-              <div class="row mt-3" v-if="dateSlots && dateSlots.length > 0">
+            <div class="overflow-auto" style="height:275px">
+              <div class="row row-cols-3 mt-3" v-if="dateSlots && dateSlots.length > 0">
                 <div
                   class="col mb-2"
                   v-for="(date, index) in dateSlots"
@@ -52,7 +52,10 @@
                 <hr />
                 <h4>วันที่เลือกจะเปิดให้บริการจองคิว</h4>
                 <h4>
-                  ในวันที่ {{ validateReserveText | getDateTh }} เวลา 09:00 น.
+                  ในวันที่ {{ validateReserveDateText | getDateTh }} 
+                </h4>
+                <h4>
+                  ตั้งแต่เวลา 09:00 น.
                 </h4>
               </div>
 
@@ -178,11 +181,24 @@ export default {
   computed: {
     ...mapState({
       entityIdVuex: (state) => state.appState.entityId,
+      entityDataVuex: (state) => state.appState.organizationData,
       userIdVuex: (state) => state.appState.userId,
       timeslotListVuex: (state) => state.reserve.timeslotList,
       userFormVuex: (state) => state.appState.user,
-      dateReserveVuex: (state) => _.take(state.appState.dateReserve, 4),
     }),
+    dateReserveVuex() {
+      const reserveMode = this.entityDataVuex.reserveMode  == 1 ? 1 : 0
+      const dataReserveList = this.$store.state.appState.dateReserve
+
+      if(reserveMode == 0) {
+        const reserveValue = this.entityDataVuex.reserveValue ? this.entityDataVuex.reserveValue : 1
+        return _.take(dataReserveList, reserveValue)
+      }
+
+      if(reserveMode == 1) {
+        return dataReserveList
+      }
+    },
     canReserve() {
       if (this.reserveDate == "") return false;
       if (this.reserveTime == "") return false;
@@ -192,20 +208,20 @@ export default {
   },
   filters: {
     getDateNumber(date) {
-      if (!date) return "-";
+      if (!date || date == '') return "-";
       const dateNumber = date.split("-")[2];
       return parseInt(dateNumber);
     },
     getMountName(date) {
-      if (!date) return "-";
+      if (!date || date == '') return "-";
       return monthNameById(date);
     },
     getDateTh(date) {
-      if (!date) return "-";
+      if (!date || date == '') return "-";
       return formatDate(date);
     },
     getFormatTime(time) {
-      if (!time) return "-";
+      if (!time || time == '') return "-";
       return formatTime(time);
     },
     calRestOfQueue(data, entityId, reserveDate) {
@@ -257,7 +273,7 @@ export default {
       validateTimeslot: false,
       validateSameDate: false,
       validateReserve: false,
-      validateReserveText: "",
+      validateReserveDateText: "",
 
       rowActive: -1,
     };
@@ -285,25 +301,57 @@ export default {
 
       this.reserveTime = "";
     },
-    checkDateRange() {
-      this.reserveTime = "";
-
+    checkModeAdvance() {
       const today = dayjs();
       const timestamp = dayjs(this.reserveDate);
-      const timeDiffHr = timestamp.diff(today, "hour");
+      const timeDiffDay = timestamp.diff(today, "day");
+      const reserveValue = this.entityDataVuex.reserveValue ? this.entityDataVuex.reserveValue : 1
+
       const canReserveDate = dayjs(this.reserveDate)
-        .subtract(1, "day")
+        .subtract(reserveValue, "day") 
         .format("YYYY-MM-DD");
 
-      if (timeDiffHr > 15) {
-        this.validateReserveText = canReserveDate;
+      // console.log(timeDiffDay, reserveValue, canReserveDate)
+      if (timeDiffDay >= reserveValue) {
+        this.validateReserveDateText = canReserveDate;
         this.validateReserve = true;
         return false;
       }
 
-      this.validateReserveText = "";
+      this.validateReserveDateText = "";
       this.validateReserve = false;
       return true;
+
+    },
+    checkModeAll() {
+      const reserveDateEntity = this.entityDataVuex.reserveDate
+      const today = dayjs();
+      const timestamp = dayjs(reserveDateEntity);
+      const timeDiffDay = timestamp.diff(today, "day");
+
+
+      if(timeDiffDay > 0) {
+        this.validateReserveDateText = reserveDateEntity;
+        this.validateReserve = true;
+        return false;
+      }
+
+      this.validateReserveDateText = "";
+      this.validateReserve = false;
+      return true;
+    },
+    checkDateRange() {
+      this.reserveTime = "";
+
+      const reserveMode = this.entityDataVuex.reserveMode  == 1 ? 1 : 0
+
+      if(reserveMode == 0) {
+        return this.checkModeAdvance()
+      }
+
+      if(reserveMode == 1) {
+        return this.checkModeAll()
+      }
     },
     async selectReserveDate(value) {
       this.reserveDate = value;
@@ -316,6 +364,7 @@ export default {
       }
 
       const inDateRange = this.checkDateRange();
+
       if (!inDateRange) return;
       this.loading = true;
       this.$store.commit("appState/setState", {
@@ -337,8 +386,6 @@ export default {
       this.validateTimeslot = false;
     },
     selectReserveTime(time, rowIndex, data) {
-      // let radioElement = document.getElementById(elementId);
-      // radioElement.checked = true;
       if (data.open - data.reserve == 0) {
         return;
       }

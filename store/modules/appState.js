@@ -124,7 +124,20 @@ const appStateModule = {
       const p = new Promise(async (resolve, reject) => {
 
         try {
-          const response = await axiosApi.get(`/server/opentime`)
+          const reserveEntity = state.organizationData
+          const reserveMode = reserveEntity.reserveMode == 1 ? 1 : 0
+          let response = {}
+
+          if(reserveMode == 0) {
+            response = await axiosApi.get(`/server/opentime`)
+          } 
+
+          if(reserveMode == 1) {
+            const currentDay = reserveEntity.reserveDate
+            const currentTime = reserveEntity.reserveTime
+            response = await axiosApi.get(`/server/opentime?date=${currentDay}&time=${currentTime}`)
+          }
+
           commit('setState', { key: 'server', payload: response.data })
           resolve(true)
         }
@@ -172,9 +185,9 @@ const appStateModule = {
 
             const orderbyDate = _.orderBy(tmpArray, ['date'], ['asc'])
             const filtered = _.filter(orderbyDate, d => d.date >= today)
-            const takeDate = _.take(filtered, 7)
+            // const takeDate = _.take(filtered, 7)
 
-            commit('setState', { key: 'dateReserve', payload: takeDate })
+            commit('setState', { key: 'dateReserve', payload: filtered })
             resolve(true)
           }
         }
@@ -255,7 +268,10 @@ const appStateModule = {
     async checkEntity(context) {
       const { state, commit } = context
       const firstDateObj = _.head(state.dateReserve)
-      const newFormatFirstDate = formatDate(firstDateObj.date)
+      const target = state.server.target
+      const targetSplit = target.split('T')
+      const newFormatTargetDate = formatDate(targetSplit[0])
+      const newFormatTargetTime = targetSplit[1].slice(0, 5)
 
       // check active entity
       if (state.organizationData.active == false) {
@@ -280,7 +296,7 @@ const appStateModule = {
         commit('setState', { key: 'isLoading', payload: false })
         commit('setState', { key: 'canReserve', payload: false })
         commit('setState', { key: 'entityShutdown', payload: true })
-        commit('setState', { key: 'entityShutdownText', payload: `ระบบจะเปิดจองในวันที่ ${newFormatFirstDate} 9:00 น` })
+        commit('setState', { key: 'entityShutdownText', payload: `ระบบจะเปิดจองในวันที่ ${newFormatTargetDate} ${newFormatTargetTime} น` })
 
         setTimeout(() => {
           window.location.reload()
@@ -289,24 +305,39 @@ const appStateModule = {
         return 
       }
 
-      // check date tomorrow active && next day reservation
-      const tomorrowList = _.filter(state.dateReserve, { date: state.server.tomorrow })
-      const tomorrowObj = _.head(tomorrowList)
-      const dateCanReserve = dayjs(firstDateObj.date).subtract(1, 'day').format("YYYY-MM-DD")
-      const newFormatCanReserve = formatDate(dateCanReserve)
-      
-      if(tomorrowList.length == 0) {
-        commit('setState', { key: 'canReserve', payload: false })
-        commit('setState', { key: 'entityShutdown', payload: true })
-        commit('setState', { key: 'entityShutdownText', payload: `ระบบจะเปิดจองในวันที่ ${newFormatCanReserve} 09:00น.` })
-        return
+      // check entity reserve date and time 
+      const todayDate = dayjs().format('YYYY-MM-DD')
+      const reserveMode = state.organizationData.reserveMode  == 1 ? 1 : 0
+
+      if(reserveMode == 0) {
+        const reserveTagetDate = targetSplit[0]
+        const entityReserveValue = state.organizationData.reserveValue ? state.organizationData.reserveValue : 1
+
+        const canReserveDate = dayjs(reserveTagetDate)
+        .subtract(entityReserveValue, "day") 
+        .format("YYYY-MM-DD");
+
+        if(todayDate < canReserveDate) {
+          commit('setState', { key: 'canReserve', payload: false })
+          commit('setState', { key: 'entityShutdown', payload: true })
+          commit('setState', { key: 'entityShutdownText', payload: `ระบบจะเปิดจองในวันที่ ${formatDate(canReserveDate)} ${newFormatTargetTime} น` })
+          return
+        }
       }
 
-      if (tomorrowObj && tomorrowObj.active == false) {
-        commit('setState', { key: 'canReserve', payload: false })
-        commit('setState', { key: 'entityShutdown', payload: true })
-        commit('setState', { key: 'entityShutdownText', payload: 'ได้มีการปิดรับลงทะเบียนชั่วคราว กรุณาตรวจสอบอีกครั้งภายหลัง' })
-        return 
+      if(reserveMode == 1) {
+        const entityReserveDate = state.organizationData.reserveDate
+        const entityReserveTime = state.organizationData.reserveTime
+
+        const newFormatReserveDate = formatDate(entityReserveDate)
+        const newFormatReserveTime = entityReserveTime[0] + entityReserveTime[1] + ':' + entityReserveTime[2] + entityReserveTime[3]
+
+        if(todayDate < entityReserveDate) {
+          commit('setState', { key: 'canReserve', payload: false })
+          commit('setState', { key: 'entityShutdown', payload: true })
+          commit('setState', { key: 'entityShutdownText', payload: `ระบบจะเปิดจองในวันที่ ${newFormatReserveDate} ${newFormatReserveTime} น` })
+          return
+        }
       }
 
 
