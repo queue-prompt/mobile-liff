@@ -35,16 +35,16 @@
                 <form class="">
                   <div class="row text-center">
                     <h3>ระบบลงทะเบียนจองคิว</h3>
-                    <h3 v-if="organizationData.type == '100' || organizationData.type == '200'">
+                    <h3 v-if="organizationData.type == '100' || organizationData.type == '200'" class="fw-bold my-2">
                       {{ organizationData.type | getEventType }}
                     </h3>
 
-                    <h3 v-else>
+                    <h3 v-else class="fw-bold my-2">
                       {{ organizationData.type }}
                     </h3>
 
 
-                    <h4 class="">
+                    <h4 class="mt-2">
                       {{
                         organizationData.price
                           ? `( มีค่าใช้จ่าย ${organizationData.price} บาท )`
@@ -57,9 +57,9 @@
                     <div class="card-boby card-subtitle text-center p-2">
                       <p class="">
                         ตารางจองคิว <br />
-                        <strong style="background: yellow"
+                        <!-- <strong style="background: yellow"
                           >(ระบบจะเปิดรับจองล่วงหน้า 1 วันเท่านั้น)</strong
-                        >
+                        > -->
                       </p>
                       <p class="" v-for="d in dateList" :key="d.date">
                         {{ d.date | thaiDate }}
@@ -146,11 +146,24 @@ export default {
     ...mapState({
       entityId: (state) => state.appState.entityId,
       organizationData: (state) => state.appState.organizationData,
-      dateList: (state) => state.appState.dateReserve,
+      // dateList: (state) => state.appState.dateReserve,
       canReserve: (state) => state.appState.canReserve,
       entityShutdown: (state) => state.appState.entityShutdown,
       entityShutdownText: (state) => state.appState.entityShutdownText,
     }),
+    dateList() {
+      const reserveMode = this.organizationData.reserveMode  == 1 ? 1 : 0
+      const dataReserveList = this.$store.state.appState.dateReserve
+
+      if(reserveMode == 0) {
+        const reserveValue = this.organizationData.reserveValue ? this.organizationData.reserveValue : 1
+        return _.take(dataReserveList, reserveValue)
+      }
+
+      if(reserveMode == 1) {
+        return dataReserveList
+      }
+    },
     todayReserve() {
       const dataReserve = this.$store.state.appState.dateReserve;
       const tomorrowObj = _.head(dataReserve);
