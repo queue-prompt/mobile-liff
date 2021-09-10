@@ -15,7 +15,7 @@
       <div class="card-body">
         <div class="row">
           <div class="col-12" style="min-height: 65vh; height: auto">
-            <div class="overflow-auto" style="height:275px">
+            <div class="overflow-auto" style="height:200px">
               <div class="row row-cols-3 mt-3" v-if="dateSlots && dateSlots.length > 0">
                 <div
                   class="col mb-2"
@@ -72,7 +72,7 @@
               >
                 <thead>
                   <tr>
-                    <th scope="col" colspan="2">เลือกเวลานัดหมาย *</th>
+                    <th scope="col" colspan="2">เลือกเวลานัดหมาย <span class="text-danger">*</span></th>
 
                     <!-- <th scope="col" class="text-left">เวลา</th> -->
                     <th scope="col" class="text-center">คิวว่าง</th>

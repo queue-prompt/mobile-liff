@@ -54,7 +54,7 @@
                   </div>
 
                   <div class="card mt-3 card-border mb-0">
-                    <div class="card-boby card-subtitle text-center p-2">
+                    <div class="card-boby card-subtitle text-center p-2" :style="readMore ? 'height: 500px; overflow: scroll;' : 'height: 290px; overflow: hidden;'">
                       <p class="">
                         ตารางจองคิว <br />
                         <!-- <strong style="background: yellow"
@@ -67,9 +67,14 @@
                           >เปิดรับทั้งหมด {{ d.open }} คิว</span
                         >
                       </p>
-                      <!-- <p class="">ดูตารางทั้งหมด</p> -->
+
                     </div>
                   </div>
+
+                  <div class="text-center" v-if="dateList && dateList.length > 7">
+                    <button class="btn btn-secondary mt-3" @click.prevent="readMoreToggle">{{readMore ? 'ย่อลง' : 'อ่านต่อ'}}</button>
+                  </div>
+
                   <div class="form-group login-submit">
                     <p class="text-secondary text-end" style="color: '#ccc'" v-if="isReserved && canReserve">
                       <em>( ระบบจะอัพเดตทุก 5 นาที )</em> 
@@ -139,7 +144,8 @@ export default {
   data() {
     return { 
       defaultLogo: false,
-      isReserved: false
+      isReserved: false,
+      readMore: false
     };
   },
   computed: {
@@ -224,6 +230,9 @@ export default {
       if(dateLocalStorage) {
         this.isReserved = true
       }
+    },
+    readMoreToggle() {
+      this.readMore = !this.readMore
     },
     async next(page) {
       if (page == "register") {

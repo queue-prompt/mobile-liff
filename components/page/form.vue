@@ -507,7 +507,7 @@ export default {
       this.mobile = mobile;
       this.confirmMobile = mobile;
       this.gender = gender;
-      this.remark = remark
+      this.remark = remark ? remark : ''
     },
     getGenderByPrefix() {
       const maleList = ["นาย", "เด็กชาย"];
