@@ -38,6 +38,11 @@
               <p class="text-secondary mb-0">เบอร์โทรศัพท์</p>
               <p>{{ userFormVuex.mobile }}</p>
             </div>
+
+            <div class="mb-3">
+              <p class="text-secondary mb-0">ข้อมูลเพิ่มเติม</p>
+              <p>{{ userFormVuex.remark ? userFormVuex.remark : '-' }}</p>
+            </div>
           </div>
         </div>
       </div>

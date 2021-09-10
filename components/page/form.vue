@@ -273,6 +273,20 @@
               </div>
 
               <div class="col-12 mt-5">
+                <label for="input-remark" class="form-label">ข้อมูลเพิ่มเติม</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="input-remark"
+                  v-model="remark"
+                  autocomplete="off"
+                  maxlength="50"
+                  @input="setFieldLocalStorage"
+                />
+                <p class="text-right" style="color: #ccc;">{{ remark.length }} / 50 ตัวอักษร </p>
+              </div>
+
+              <div class="col-12 mt-5">
                 <div class="d-grid gap-2 mt-3">
                   <!-- <button class="my-3" @click="mock" v-if="isDebug">
                     mock
@@ -417,6 +431,7 @@ export default {
       confirmMobile: "",
       gender: "",
       idCardNumber: "",
+      remark: '',
       validId: true,
       isDebug: process.env.isDebug || false,
     };
@@ -459,7 +474,8 @@ export default {
         mobile: this.mobile,
         confirmMobile: this.mobile,
         gender: this.gender,
-        typeIdNumber: this.typeIdNumber
+        typeIdNumber: this.typeIdNumber,
+        remark: this.remark
       };
       if (process.browser) {
         localStorage.setItem("form", JSON.stringify(formPayload));
@@ -477,7 +493,7 @@ export default {
         year,
         month,
         date,
-        typeIdNumber
+        remark
       } = form;
 
       this.groupOf = groupOf
@@ -491,6 +507,7 @@ export default {
       this.mobile = mobile;
       this.confirmMobile = mobile;
       this.gender = gender;
+      this.remark = remark
     },
     getGenderByPrefix() {
       const maleList = ["นาย", "เด็กชาย"];
@@ -567,6 +584,7 @@ export default {
         birthDate: birthDate,
         mobile: this.mobile,
         gender: this.gender,
+        remark: this.remark
       };
       this.$store.commit("appState/setState", {
         key: "user",
