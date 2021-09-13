@@ -496,17 +496,17 @@ export default {
         remark
       } = form;
 
-      this.groupOf = groupOf
-      this.prefix = prefix;
-      this.firstName = firstName;
-      this.lastName = lastName;
-      this.idCardNumber = idCardNumber;
-      this.year = year;
-      this.month = month;
-      this.date = date;
-      this.mobile = mobile;
-      this.confirmMobile = mobile;
-      this.gender = gender;
+      this.groupOf = groupOf ? groupOf : ''
+      this.prefix = prefix ? prefix : ''
+      this.firstName = firstName ? firstName : ''
+      this.lastName = lastName ? lastName : ''
+      this.idCardNumber = idCardNumber ? idCardNumber : ''
+      this.year = year ? year : ''
+      this.month = month ? month : ''
+      this.date = date ? date : ''
+      this.mobile = mobile ?mobile : ''
+      this.confirmMobile = mobile ? mobile : ''
+      this.gender = gender ? gender : ''
       this.remark = remark ? remark : ''
     },
     getGenderByPrefix() {
