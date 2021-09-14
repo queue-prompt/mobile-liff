@@ -295,6 +295,14 @@ const appStateModule = {
         return 
       }
 
+      //check date timeslot active 
+      if(state.dateReserve.length == 1 && firstDateObj.active == false) {
+        commit('setState', { key: 'canReserve', payload: false })
+        commit('setState', { key: 'entityShutdown', payload: true })
+        commit('setState', { key: 'entityShutdownText', payload: 'ระบบปิดรับลงทะเบียนชั่วคราว กรุณาตรวจสอบอีกครั้งในภายหลัง' })
+        return 
+      }
+
       // check delay
       if (state.server.delay && state.server.delay !== 0) {
         let delay = state.server.delay
@@ -344,7 +352,7 @@ const appStateModule = {
 
       //check full
       const isFull = firstDateObj.open - firstDateObj.reserve == 0 
-      if (isFull) {
+      if (state.dateReserve.length == 1 && isFull) {
         commit('setState', { key: 'canReserve', payload: false })
         const dateIsFull = formatDate(firstDateObj.date)
         commit('setState', { key: 'entityShutdown', payload: true })
