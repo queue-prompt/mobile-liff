@@ -15,7 +15,7 @@
       <div class="card-body">
         <div class="row">
           <div class="col-12" style="min-height: 65vh; height: auto">
-            <div class="overflow-auto" style="height:200px">
+            <div style="height:200px; overflow-x: hidden; overflow-y: auto;">
               <div class="row row-cols-3 mt-3" v-if="dateSlots && dateSlots.length > 0">
                 <div
                   class="col mb-2"

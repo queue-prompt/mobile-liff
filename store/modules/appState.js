@@ -128,17 +128,13 @@ const appStateModule = {
           const reserveMode = reserveEntity.reserveMode == 1 ? 1 : 0
           let response = {}
 
-          if(reserveMode == 0) {
-            response = await axiosApi.get(`/server/opentime`)
-          } 
-
           if(reserveMode == 1) {
             const currentDay = reserveEntity.reserveDate
             const currentTime = reserveEntity.reserveTime
             response = await axiosApi.get(`/server/opentime?date=${currentDay}&time=${currentTime}`)
           }
 
-          commit('setState', { key: 'server', payload: response.data })
+          commit('setState', { key: 'server', payload: response.data ?  response.data : {}})
           resolve(true)
         }
 
@@ -268,16 +264,26 @@ const appStateModule = {
     async checkEntity(context) {
       const { state, commit } = context
       const firstDateObj = _.head(state.dateReserve)
-      const target = state.server.target
-      const targetSplit = target.split('T')
-      const newFormatTargetDate = formatDate(targetSplit[0])
-      const newFormatTargetTime = targetSplit[1].slice(0, 5)
+      const todayDate = dayjs().format('YYYY-MM-DD')
+      const reserveMode = state.organizationData.reserveMode  == 1 ? 1 : 0
+
+      let target = ''
+      let targetSplit = []
+      let newFormatTargetDate = ''
+      let newFormatTargetTime = ''
+
+      if(reserveMode == 1) {
+        target = state.server.target
+        targetSplit = target.split('T')
+        newFormatTargetDate = formatDate(targetSplit[0])
+        newFormatTargetTime = targetSplit[1].slice(0, 5)
+      }
 
       // check active entity
       if (state.organizationData.active == false) {
         commit('setState', { key: 'canReserve', payload: false })
         commit('setState', { key: 'entityShutdown', payload: true })
-        commit('setState', { key: 'entityShutdownText', payload: 'ได้มีการปิดรับลงทะเบียนชั่วคราว กรุณาตรวจสอบอีกครั้งภายหลัง' })
+        commit('setState', { key: 'entityShutdownText', payload: 'ระบบปิดรับลงทะเบียนชั่วคราว กรุณาตรวจสอบอีกครั้งในภายหลัง' })
         return 
       }
 
@@ -289,8 +295,8 @@ const appStateModule = {
         return 
       }
 
-      // check delay 
-      if (state.server.delay !== 0) {
+      // check delay
+      if (state.server.delay && state.server.delay !== 0) {
         let delay = state.server.delay
 
         commit('setState', { key: 'isLoading', payload: false })
@@ -306,21 +312,16 @@ const appStateModule = {
       }
 
       // check entity reserve date and time 
-      const todayDate = dayjs().format('YYYY-MM-DD')
-      const reserveMode = state.organizationData.reserveMode  == 1 ? 1 : 0
-
       if(reserveMode == 0) {
-        const reserveTagetDate = targetSplit[0]
         const entityReserveValue = state.organizationData.reserveValue ? state.organizationData.reserveValue : 1
-
-        const canReserveDate = dayjs(reserveTagetDate)
+        const canReserveDate = dayjs()
         .subtract(entityReserveValue, "day") 
         .format("YYYY-MM-DD");
 
         if(todayDate < canReserveDate) {
           commit('setState', { key: 'canReserve', payload: false })
           commit('setState', { key: 'entityShutdown', payload: true })
-          commit('setState', { key: 'entityShutdownText', payload: `ระบบจะเปิดจองในวันที่ ${formatDate(canReserveDate)} ${newFormatTargetTime} น` })
+          commit('setState', { key: 'entityShutdownText', payload: `ระบบจะเปิดจองในวันที่ ${formatDate(canReserveDate)}` })
           return
         }
       }

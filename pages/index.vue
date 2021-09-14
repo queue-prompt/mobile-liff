@@ -46,7 +46,7 @@
 
                     <h4 class="mt-2">
                       {{
-                        organizationData.price
+                        organizationData.price > 0 
                           ? `( มีค่าใช้จ่าย ${organizationData.price} บาท )`
                           : ""
                       }}<span></span>

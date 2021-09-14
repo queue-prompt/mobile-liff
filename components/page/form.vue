@@ -273,7 +273,7 @@
               </div>
 
               <div class="col-12 mt-5">
-                <label for="input-remark" class="form-label">ข้อมูลเพิ่มเติม</label>
+                <label for="input-remark" class="form-label">ข้อมูลเพิ่มเติม (ถ้ามี)</label>
                 <input
                   type="text"
                   class="form-control"
@@ -283,7 +283,7 @@
                   maxlength="50"
                   @input="setFieldLocalStorage"
                 />
-                <p class="text-right" style="color: #ccc;">{{ remark.length }} / 50 ตัวอักษร </p>
+                <p class="ml-1" style="color: #ccc;">{{ remark.length }} / 50 ตัวอักษร </p>
               </div>
 
               <div class="col-12 mt-5">

@@ -8,8 +8,8 @@
       <div class="row">
         <div class="col-12">
           <div
-            class="card-subtitle overflow-scroll p-2"
-            style="height: 50vh; font-size: 1.1rem; color: #333"
+            class="card-subtitle p-2"
+            style="height: 50vh; font-size: 1.1rem; color: #333; overflow: auto;" 
           >
             <div class="" v-html="preRegisterText"></div>
           </div>
