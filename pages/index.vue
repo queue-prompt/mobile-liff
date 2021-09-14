@@ -84,7 +84,7 @@
                       วันที่ {{ todayReserve.date | thaiDate }}:
 
                       <span class="ml-1"
-                        >เปิดรับ {{ todayReserve.open }} คิว</span
+                        >คิวว่าง {{ todayReserve.open }} คิว</span
                       >
                       <span class="float-right"
                         >เหลือ
