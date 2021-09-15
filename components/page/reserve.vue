@@ -16,7 +16,7 @@
         <div class="row">
           <div class="col-12" style="min-height: 65vh; height: auto">
             <div style="height:200px; overflow-x: hidden; overflow-y: auto;">
-              <div class="row row-cols-3 mt-3" v-if="dateSlots && dateSlots.length > 0">
+              <div class="row row-cols-3 mt-3 mx-auto" v-if="dateSlots && dateSlots.length > 0">
                 <div
                   class="col mb-2"
                   v-for="(date, index) in dateSlots"
