@@ -54,7 +54,10 @@
                   </div>
 
                   <div class="card mt-3 card-border mb-0">
-                    <div class="card-boby card-subtitle text-center p-2" :style="readMore ? 'height: 500px; overflow: scroll;' : 'height: 290px; overflow: hidden;'">
+                    <div 
+                      class="card-boby card-subtitle text-center p-2" 
+                      :style="readMore ? 'height: 500px; overflow: scroll;' : dateList && dateList.length > 7 ? 'height: 290px; overflow: hidden;' : 'height: auto; overflow: hidden;'"
+                    >
                       <p class="">
                         ตารางจองคิว <br />
                         <!-- <strong style="background: yellow"
