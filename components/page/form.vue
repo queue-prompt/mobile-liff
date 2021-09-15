@@ -407,6 +407,7 @@ export default {
     this.monthList = monthList;
     this.yearList = yearList;
     this.typeIdNumber = 'idCardNumber';
+    this.groupOf = 'ทั่วไป'
     this.prefixList = prefixList;
     this.idCardNumberState = "start";
     this.validateInputForm();
@@ -463,7 +464,6 @@ export default {
     },
     setFieldLocalStorage() {
       const formPayload = {
-        groupOf: this.groupOf,
         prefix: this.prefix,
         firstName: this.firstName,
         lastName: this.lastName,
@@ -496,7 +496,7 @@ export default {
         remark
       } = form;
 
-      this.groupOf = groupOf ? groupOf : ''
+      this.groupOf = groupOf ? groupOf : 'ทั่วไป'
       this.prefix = prefix ? prefix : ''
       this.firstName = firstName ? firstName : ''
       this.lastName = lastName ? lastName : ''
