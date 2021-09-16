@@ -70,13 +70,20 @@
                           >เปิดรับทั้งหมด {{ d.open }} คิว</span
                         >
                       </p>
+                    </div>
 
+                    <div class="text-center mt-3 mb-2" v-if="dateList && dateList.length > 7">
+                      <button 
+                        type="button" 
+                        class="btn btn-link"
+                        @click.prevent="readMoreToggle" 
+                        style="box-shadow: none; text-decoration: underline;"
+                      >
+                        {{readMore ? 'ย่อลง' : 'อ่านต่อ'}}
+                      </button>
                     </div>
                   </div>
 
-                  <div class="text-center" v-if="dateList && dateList.length > 7">
-                    <button class="btn btn-secondary mt-3" @click.prevent="readMoreToggle">{{readMore ? 'ย่อลง' : 'อ่านต่อ'}}</button>
-                  </div>
 
                   <div class="form-group login-submit">
                     <p class="text-secondary text-end" style="color: '#ccc'" v-if="isReserved && canReserve">
@@ -124,6 +131,10 @@
                     >
                       ตรวจสอบคิว
                     </button>
+                  </div>
+
+                  <div v-if="organizationData.citizenContact && organizationData.citizenContact.phone">
+                    <p class="text-center">เบอร์ติดต่อ: {{organizationData.citizenContact.phone}}</p>
                   </div>
                 </form>
               </div>
@@ -226,6 +237,7 @@ export default {
     if(this.todayReserve) {
       this.getPrevReserveData(this.todayReserve)
     }
+
   },
   methods: {
     getPrevReserveData(dateData) {

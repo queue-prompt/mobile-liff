@@ -11,11 +11,14 @@
           <i class="bi bi-arrow-repeat"></i>
         </button>
       </div>
-      <!-- <span class="card-subtitle">Card subtitle description</span></div> -->
+
       <div class="card-body">
         <div class="row">
           <div class="col-12" style="min-height: 65vh; height: auto">
-            <div style="height:200px; overflow-x: hidden; overflow-y: auto;">
+            <div 
+              style="overflow-x: hidden; overflow-y: auto;" 
+              :style="dateSlots && dateSlots.length < 7 ? 'height: auto;' : 'height:200px;' "
+            >
               <div class="row row-cols-3 mt-3 mx-auto" v-if="dateSlots && dateSlots.length > 0">
                 <div
                   class="col mb-2"
@@ -34,7 +37,7 @@
                   <label
                     class="btn btn-outline-primary"
                     :for="`reserve-date-${index}`"
-                    style="min-height: 62px; height: auto"
+                    style="min-height: 62px; height: auto; min-width: 70px;"
                   >
                     <div>{{ date.date | getDateNumber }}</div>
                     <div>{{ date.date | getMountName }}</div>
@@ -73,8 +76,6 @@
                 <thead>
                   <tr>
                     <th scope="col" colspan="2">เลือกเวลานัดหมาย <span class="text-danger">*</span></th>
-
-                    <!-- <th scope="col" class="text-left">เวลา</th> -->
                     <th scope="col" class="text-center">คิวว่าง</th>
                   </tr>
                 </thead>

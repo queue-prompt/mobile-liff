@@ -99,7 +99,7 @@ const appStateModule = {
             localStorage.setItem('entityId', entityId)
             const entityData = {
               ...data,
-              adress: data.location ? data.location.address : '',
+              // adress: data.location ? data.location.address : '',
             }
   
             commit('setState', { key: 'organizationData', payload: entityData })
