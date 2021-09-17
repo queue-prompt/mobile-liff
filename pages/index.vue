@@ -67,7 +67,7 @@
                       <p class="" v-for="d in dateList" :key="d.date">
                         {{ d.date | thaiDate }}
                         <span class="ml-2"
-                          >เปิดรับทั้งหมด {{ d.open }} คิว</span
+                          >คิวว่าง {{ d.open - d.reserve }} คิว</span
                         >
                       </p>
                     </div>
@@ -94,7 +94,7 @@
                       วันที่ {{ todayReserve.date | thaiDate }}:
 
                       <span class="ml-1"
-                        >คิวว่าง {{ todayReserve.open }} คิว</span
+                        >เปิดรับทั้งหมด {{ todayReserve.open }} คิว</span
                       >
                       <span class="float-right"
                         >เหลือ
@@ -134,7 +134,7 @@
                   </div>
 
                   <div v-if="organizationData.citizenContact && organizationData.citizenContact.phone">
-                    <p class="text-center">เบอร์ติดต่อ: {{organizationData.citizenContact.phone}}</p>
+                    <p class="text-center">เบอร์ติดต่อ : {{organizationData.citizenContact.phone}}</p>
                   </div>
                 </form>
               </div>

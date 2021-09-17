@@ -50,6 +50,10 @@
 
             <div>
               <!-- Warning to revisit -->
+              <div  class="text-danger text-center mt-5" v-if="!validateReserve && !validateSameDate && reserveDate == ''">
+                <hr />
+                <h4>กรุณาเลือกวันนัดหมาย</h4>
+              </div>
 
               <div v-if="validateReserve" class="text-danger text-center mt-5">
                 <hr />
