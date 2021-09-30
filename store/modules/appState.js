@@ -1,7 +1,7 @@
 import axiosApi from '../../service/config_axios'
 import _ from 'lodash-core'
 import dayjs from 'dayjs'
-import {formatDate} from '../../static/transform'
+import { formatDate } from '../../static/transform'
 
 const appStateModule = {
   namespaced: true,

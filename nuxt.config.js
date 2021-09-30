@@ -1,7 +1,8 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   googleAnalytics: {
-    id: 'UA-204288028-2'
+    id: process.env.GOOGLE_ANALYTIC_ID,
+    debug: false
   },
   head: {
     title: 'คิวพร้อม.com',
@@ -43,6 +44,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/gtm'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -57,7 +59,13 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/gtm',
+    '@nuxtjs/dotenv',
   ],
+  gtm: {
+    enabled: true, /* see below */
+    id: process.env.GOOGLE_TAG_MANAGER_ID
+  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
