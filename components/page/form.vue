@@ -104,7 +104,8 @@
                 <div class="invalid-feedback">กรุณากรอกนามสกุล</div>
               </div>
 
-              <div class="col-12 mt-5" v-if="organizationForCovid">
+              <!-- <div class="col-12 mt-5" v-if="organizationForCovid"> -->
+              <div class="col-12 mt-5">
                 <div class="form-group row pt-0 pb-0">
                   <label class="col-12 mb-2 col-form-label form-label">ชนิดเลขระบุตัวตน</label>
                   <div class="col-12 mt-1">
@@ -141,7 +142,8 @@
                 </p>
               </div>
 
-              <div class="col-12 mt-5" v-if="typeIdNumber == 'passportNumber' && organizationForCovid">
+              <!-- <div class="col-12 mt-5" v-if="typeIdNumber == 'passportNumber' && organizationForCovid"> -->
+              <div class="col-12 mt-5" v-if="typeIdNumber == 'passportNumber'">
                 <label for="input-passportNumber" class="form-label"
                   >Passport No.
                 </label>
@@ -272,7 +274,7 @@
                 </p>
               </div>
 
-              <div class="col-12 mt-5">
+              <div class="col-12 mt-5" v-if="typeIdNumber == 'idCardNumber'">
                 <label for="input-remark" class="form-label">ข้อมูลเพิ่มเติม (ถ้ามี)</label>
                 <input
                   type="text"
@@ -286,11 +288,28 @@
                 <p class="ml-1" style="color: #ccc;">{{ remark.length }} / 50 ตัวอักษร </p>
               </div>
 
+              <div class="col-12 mt-5" v-if="typeIdNumber == 'passportNumber'">
+                <label for="input-input-select-country" class="form-label">ประเทศ</label>
+                <select
+                  class="form-select form-select-lg"
+                  id="input-select-country"
+                  v-bind:class="{ isInitState: checkSelectInitState('remark') }"
+                  @change="(e) => selectForm(e, 'remark')"
+                  v-model="remark"
+                  required
+                >
+                  <option value="" selected disabled>
+                    กรุณาเลือกประเทศ
+                  </option>
+
+                  <option value="ลาว">ลาว</option>
+                  <option value="พม่า">พม่า</option>
+                  <option value="กัมพูชา">กัมพูชา</option>
+                </select>
+              </div>
+
               <div class="col-12 mt-5">
                 <div class="d-grid gap-2 mt-3">
-                  <!-- <button class="my-3" @click="mock" v-if="isDebug">
-                    mock
-                  </button> -->
 
                   <button class="btn btn-primary btn-xl" type="submit">
                     ต่อไป
@@ -346,8 +365,6 @@ import { dateList, monthList, yearList } from "../../static/birthDate";
 import prefixList from "../../static/prefix";
 import ComfirmComponent from "./confirm.vue";
 
-const MOCK =
-  '{"prefix":"นาง","firstName":"warit","lastName":"tantivirasut","idCardNumber":"1101400842210","year":"2552","month":"02","date":"2","mobile":"0818460621","confirmMobile":"0818460621","gender":"female","province":"กรุงเทพมหานคร"}';
 export default {
   props: {
     next: { type: Function, required: true },
@@ -387,7 +404,8 @@ export default {
       if (this.confirmMobile == "") return false;
       if (this.gender == "" || !this.gender) return false;
       if (this.idCardNumber == "") return false;
-      if (this.validId == false) return false;
+      if (this.typeIdNumber == 'idCardNumber' && this.validId == false) return false;
+      if (this.typeIdNumber == 'passportNumber' && this.remark == '') return false;
       if (this.compairMobile == false) return false;
       return true;
     },
@@ -406,7 +424,7 @@ export default {
     this.dateList = dateList;
     this.monthList = monthList;
     this.yearList = yearList;
-    this.typeIdNumber = 'idCardNumber';
+    // this.typeIdNumber = 'idCardNumber';
     this.groupOf = 'ทั่วไป'
     this.prefixList = prefixList;
     this.idCardNumberState = "start";
@@ -438,16 +456,13 @@ export default {
     };
   },
   methods: {
-    mock() {
-      let obj = JSON.parse(MOCK);
-      this.restoreForm(obj);
-    },
     selectForm(event, type) {
       const value = event.target.value;
       this[type] = value;
       if (type == "prefix") {
         this.getGenderByPrefix();
       }
+
       this.setFieldLocalStorage();
     },
     selectGroupOfPerson(type) {
@@ -456,6 +471,7 @@ export default {
     },
     selectTypeIdNumber(type) {
       this.idCardNumber = ''
+      this.remark = ''
       this.typeIdNumber = type
       this.setFieldLocalStorage()
     },
@@ -493,7 +509,8 @@ export default {
         year,
         month,
         date,
-        remark
+        remark,
+        typeIdNumber
       } = form;
 
       this.groupOf = groupOf ? groupOf : 'ทั่วไป'
@@ -508,6 +525,7 @@ export default {
       this.confirmMobile = mobile ? mobile : ''
       this.gender = gender ? gender : ''
       this.remark = remark ? remark : ''
+      this.typeIdNumber = typeIdNumber ? typeIdNumber : 'idCardNumber'
     },
     getGenderByPrefix() {
       const maleList = ["นาย", "เด็กชาย"];
@@ -565,10 +583,14 @@ export default {
       if (!this.checkInput) {
         return this.validateInputForm();
       }
-      this.checkSumId();
-      if (!this.validId) {
-        return;
+
+      if(this.typeIdNumber == 'idCardNumber') {
+        this.checkSumId();
+
+        if (!this.validId) return
       }
+
+
       const tranformMonth = this.date < 10 ? `0${this.date}` : this.date;
       const birthDateTh = `${this.year}-${this.month}-${tranformMonth}`;
       const birthDate = `${parseInt(this.year) - 543}-${
