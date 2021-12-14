@@ -25,7 +25,7 @@
             </div>
 
             <div class="mb-3">
-              <p class="text-secondary mb-0">{{ typeIdNumber }}</p>
+              <p class="text-secondary mb-0"> {{ organizationData.identityType === 0 ? 'เลขบัตรประชาชน' : organizationData.identityType }}</p>
               <p>{{ userFormVuex.idCardNumber }}</p>
             </div>
 
@@ -40,7 +40,8 @@
             </div>
 
             <div class="mb-3">
-              <p class="text-secondary mb-0">ข้อมูลเพิ่มเติม</p>
+              <p class="text-secondary mb-0" v-if="organizationData.entityId == '378816'">สัญชาติ</p>
+              <p class="text-secondary mb-0" v-if="organizationData.entityId !== '378816'">ข้อมูลเพิ่มเติม</p>
               <p>{{ userFormVuex.remark ? userFormVuex.remark : '-' }}</p>
             </div>
           </div>
@@ -57,6 +58,9 @@ import { monthList } from '../../static/birthDate'
     computed: {
       userFormVuex() {
         return this.$store.state.appState.user
+      },
+      organizationData() {
+        return this.$store.state.appState.organizationData;
       }
     },
     filters: {
@@ -89,17 +93,6 @@ import { monthList } from '../../static/birthDate'
       }
     },
     mounted() {
-      const getFormLocal = JSON.parse(localStorage.getItem('form2'))
-
-      if(getFormLocal.typeIdNumber == 'idCardNumber') {
-        return this.typeIdNumber = 'เลขบัตรประชาชน'
-      }
-
-      if(getFormLocal.typeIdNumber == 'customNumber' && getFormLocal.customName !== '') {
-        return this.typeIdNumber = getFormLocal.customName
-      } else {
-        return this.typeIdNumber = 'หนังสือเดินทาง/หมายเลขประจำตัว'
-      }
     },
     data() {
       return {

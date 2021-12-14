@@ -56,7 +56,7 @@
         </div>
 
         <div v-if="current == 1">
-          <FormComponent :next="nextStep" />
+          <FormComponent :next="nextStep" :organizationData="organizationData"/>
         </div>
 
         <div v-if="current == 2">

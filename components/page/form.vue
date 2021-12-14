@@ -104,23 +104,7 @@
                 <div class="invalid-feedback">กรุณากรอกนามสกุล</div>
               </div>
 
-              <div class="col-12 mt-5">
-                <div class="form-group row pt-0 pb-0">
-                  <label class="col-12 mb-2 col-form-label form-label">ชนิดเลขระบุตัวตน</label>
-                  <div class="col-12 mt-1">
-                    <div class="form-group mb-0 d-flex justify-content-around">
-                      <label class="custom-control custom-radio custom-control-inline">
-                        <input class="custom-control-input " type="radio" name="typeIdCard" :checked="typeIdNumber == 'idCardNumber'" @change="selectTypeIdNumber('idCardNumber')"><span class="custom-control-label custom-control-color fs-5">บัตรประชาชน</span>
-                      </label>
-                      <label class="custom-control custom-radio custom-control-inline">
-                        <input class="custom-control-input" type="radio" name="typeIdCard" :checked="typeIdNumber == 'customNumber'" @change="selectTypeIdNumber('customNumber')"><span class="custom-control-label custom-control-color fs-5">กำหนดเอง</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-12 mt-4" v-if="typeIdNumber == 'idCardNumber'">
+              <div class="col-12 mt-4" v-if="identityType === 0">
                 <label for="input-idCardNumber" class="form-label"
                   >เลขบัตรประชาชน (ไม่ต้องขีด)
                 </label>
@@ -141,20 +125,8 @@
                 </p>
               </div>
 
-              <div class="col-12 mt-2" v-if="typeIdNumber == 'customNumber'">
-                <label for="input-customNumber-label" class="form-label">กำหนดชื่อเลขระบุตัวตน</label>
-                <input
-                  type="text"
-                  class="form-control mb-3"
-                  id="input-customNumber-label"
-                  v-model="customName"
-                  autocomplete="off"
-                  @input="setFieldLocalStorage"
-                  placeholder="เช่น passport, หมายเลขคนต่างด้าว"
-                  required
-                />
-
-                <label for="input-customNumber" class="form-label">หมายเลขระบุตัวตน (ไม่ต้องขีด)</label>
+              <div class="col-12 mt-2" v-if="identityType !== 0">
+                <label for="input-customNumber" class="form-label">{{ identityType !== '' ? identityType:  'หมายเลขยืนยันตัวตน'}}</label>
                 <input
                   type="text"
                   class="form-control"
@@ -162,7 +134,7 @@
                   v-model="idCardNumber"
                   autocomplete="off"
                   @input="setFieldLocalStorage"
-                  placeholder="กรอกหมายเลขระบุตัวตน"
+                  :placeholder="`กรอก${identityType}`"
                   required
                 />
               </div>
@@ -282,21 +254,7 @@
                 </p>
               </div>
 
-              <div class="col-12 mt-5" v-if="typeIdNumber == 'idCardNumber'">
-                <label for="input-remark" class="form-label">ข้อมูลเพิ่มเติม (ถ้ามี)</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="input-remark"
-                  v-model="remark"
-                  autocomplete="off"
-                  maxlength="50"
-                  @input="setFieldLocalStorage"
-                />
-                <p class="ml-1" style="color: #ccc;">{{ remark.length }} / 50 ตัวอักษร </p>
-              </div>
-
-              <div class="col-12 mt-5" v-if="typeIdNumber == 'customNumber'">
+              <div class="col-12 mt-5" v-if="organizationData.entityId == mockEntityId">
                 <label for="input-input-select-country" class="form-label">สัญชาติ</label>
                 <select
                   class="form-select form-select-lg"
@@ -311,6 +269,20 @@
                   <option value="พม่า">พม่า</option>
                   <option value="กัมพูชา">กัมพูชา</option>
                 </select>
+              </div>
+
+              <div class="col-12 mt-5" v-if="organizationData.entityId !== mockEntityId">
+                <label for="input-remark" class="form-label">ข้อมูลเพิ่มเติม (ถ้ามี)</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="input-remark"
+                  v-model="remark"
+                  autocomplete="off"
+                  maxlength="50"
+                  @input="setFieldLocalStorage"
+                />
+                <p class="ml-1" style="color: #ccc;">{{ remark.length }} / 50 ตัวอักษร </p>
               </div>
 
               <div class="col-12 mt-5">
@@ -373,6 +345,7 @@ import ComfirmComponent from "./confirm.vue";
 export default {
   props: {
     next: { type: Function, required: true },
+    organizationData: { type: Object, required: true }
   },
   components: {
     ComfirmComponent, 
@@ -409,18 +382,17 @@ export default {
       if (this.confirmMobile == "") return false;
       if (this.gender == "" || !this.gender) return false;
       if (this.idCardNumber == "") return false;
-      if (this.typeIdNumber == 'idCardNumber' && this.validId == false) return false;
-      if (this.typeIdNumber == 'customNumber' && this.customName == '') return false;
-      if (this.typeIdNumber == 'customNumber' && this.remark == '') return false;
       if (this.compairMobile == false) return false;
+      if (this.validId == false) return false;
       return true;
     },
   },
   mounted() {
     window.scrollTo(0, 0);
-    let userForm = localStorage.getItem("form2");
+    let userForm = localStorage.getItem("registerForm");
     if (userForm) {
       userForm = JSON.parse(userForm);
+      this.identityType = this.organizationData.identityType
       this.restoreForm(userForm);
       let self = this;
       setTimeout(function () {
@@ -433,18 +405,18 @@ export default {
     this.groupOf = 'ทั่วไป'
     this.prefixList = prefixList;
     this.idCardNumberState = "start";
+    this.remark = this.organizationData.entityId == this.mockEntityId ? 'ไทย' : ''
     this.validateInputForm();
   },
   data() {
     return {
+      mockEntityId: '378816', // entityId ของแรงงานตรวจคนเข้าเมือง
       activeModal: false,
       idCardNumberState: "start", // start, done
       prefixList: [],
       dateList: [],
       monthList: [],
       yearList: [],
-      typeIdNumber: 'idCardNumber',
-      customName: '',
       groupOf: 'ทั่วไป',
       prefix: "",
       firstName: "",
@@ -459,6 +431,7 @@ export default {
       remark: '',
       validId: true,
       isDebug: process.env.isDebug || false,
+      identityType: 0
     };
   },
   methods: {
@@ -475,13 +448,6 @@ export default {
       this.groupOf = type
       this.setFieldLocalStorage()
     },
-    selectTypeIdNumber(type) {
-      
-      this.idCardNumber = ''
-      this.remark = type == 'idCardNumber' ? '' : 'ไทย'
-      this.typeIdNumber = type
-      this.setFieldLocalStorage()
-    },
     checkSelectInitState(field) {
       return this[field] == "" ? true : false;
     },
@@ -491,18 +457,17 @@ export default {
         firstName: this.firstName,
         lastName: this.lastName,
         idCardNumber: this.idCardNumber,
-        customName: this.customName,
         year: this.year,
         month: this.month,
         date: this.date,
         mobile: this.mobile,
         confirmMobile: this.mobile,
         gender: this.gender,
-        typeIdNumber: this.typeIdNumber,
-        remark: this.remark
+        remark: this.remark,
+        identityType: this.organizationData.identityType
       };
       if (process.browser) {
-        localStorage.setItem("form2", JSON.stringify(formPayload));
+        localStorage.setItem("registerForm", JSON.stringify(formPayload));
       }
     },
     restoreForm(form) {
@@ -518,16 +483,14 @@ export default {
         month,
         date,
         remark,
-        typeIdNumber,
-        customName,
+        identityType
       } = form;
 
       this.groupOf = groupOf ? groupOf : 'ทั่วไป'
       this.prefix = prefix ? prefix : ''
       this.firstName = firstName ? firstName : ''
       this.lastName = lastName ? lastName : ''
-      this.idCardNumber = idCardNumber ? idCardNumber : ''
-      this.customName = customName ? customName : ''
+      this.idCardNumber = this.identityType == identityType ? idCardNumber : ''
       this.year = year ? year : ''
       this.month = month ? month : ''
       this.date = date ? date : ''
@@ -535,7 +498,6 @@ export default {
       this.confirmMobile = mobile ? mobile : ''
       this.gender = gender ? gender : ''
       this.remark = remark ? remark : ''
-      this.typeIdNumber = typeIdNumber ? typeIdNumber : 'idCardNumber'
     },
     getGenderByPrefix() {
       const maleList = ["นาย", "เด็กชาย"];
@@ -594,12 +556,11 @@ export default {
         return this.validateInputForm();
       }
 
-      if(this.typeIdNumber == 'idCardNumber') {
+      if(this.identityType === 0) {
         this.checkSumId();
 
         if (!this.validId) return
       }
-
 
       const tranformMonth = this.date < 10 ? `0${this.date}` : this.date;
       const birthDateTh = `${this.year}-${this.month}-${tranformMonth}`;
@@ -618,6 +579,7 @@ export default {
         gender: this.gender,
         remark: this.remark
       };
+
       this.$store.commit("appState/setState", {
         key: "user",
         payload: payload,
@@ -628,9 +590,13 @@ export default {
         payload: this.idCardNumber,
       });
       this.activeModal = true;
+
+      const self = this
       setTimeout(function () {
-        const myModalEl = document.getElementById("md-confirm-form");
-        myModalEl.classList.add("modal-show");
+        if(self.identityType === 0 && self.validId) {
+          const myModalEl = document.getElementById("md-confirm-form");
+          myModalEl.classList.add("modal-show");
+        }
       }, 10);
     },
     async confirmForm() {

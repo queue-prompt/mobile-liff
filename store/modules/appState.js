@@ -97,9 +97,13 @@ const appStateModule = {
   
           if (data && data.organization) {
             localStorage.setItem('entityId', entityId)
-            const entityData = {
+            let entityData = {
               ...data,
-              // adress: data.location ? data.location.address : '',
+            }
+
+            if(entityData.identityType == undefined || entityData.identityType == null) {
+              console.log('identityType is null or undefined')
+              entityData['identityType'] = 0
             }
   
             commit('setState', { key: 'organizationData', payload: entityData })

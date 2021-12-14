@@ -136,7 +136,7 @@ const reserveModule = {
             commit('setState', { key: 'register', payload: registerPayload })
             localStorage.setItem(data.registerId, true)
             localStorage.setItem(`r:${entityId}:${reserveQueue.date}`, true)
-            localStorage.removeItem("form2");
+            localStorage.removeItem("registerForm");
             resolve(true)
           }
         }
