@@ -104,7 +104,6 @@
                 <div class="invalid-feedback">กรุณากรอกนามสกุล</div>
               </div>
 
-              <!-- <div class="col-12 mt-5" v-if="organizationForCovid"> -->
               <div class="col-12 mt-5">
                 <div class="form-group row pt-0 pb-0">
                   <label class="col-12 mb-2 col-form-label form-label">ชนิดเลขระบุตัวตน</label>
@@ -114,7 +113,7 @@
                         <input class="custom-control-input " type="radio" name="typeIdCard" :checked="typeIdNumber == 'idCardNumber'" @change="selectTypeIdNumber('idCardNumber')"><span class="custom-control-label custom-control-color fs-5">บัตรประชาชน</span>
                       </label>
                       <label class="custom-control custom-radio custom-control-inline">
-                        <input class="custom-control-input" type="radio" name="typeIdCard" :checked="typeIdNumber == 'passportNumber'" @change="selectTypeIdNumber('passportNumber')"><span class="custom-control-label custom-control-color fs-5">Passport</span>
+                        <input class="custom-control-input" type="radio" name="typeIdCard" :checked="typeIdNumber == 'customNumber'" @change="selectTypeIdNumber('customNumber')"><span class="custom-control-label custom-control-color fs-5">กำหนดเอง</span>
                       </label>
                     </div>
                   </div>
@@ -142,19 +141,28 @@
                 </p>
               </div>
 
-              <!-- <div class="col-12 mt-5" v-if="typeIdNumber == 'passportNumber' && organizationForCovid"> -->
-              <div class="col-12 mt-5" v-if="typeIdNumber == 'passportNumber'">
-                <label for="input-passportNumber" class="form-label"
-                  >Passport No.
-                </label>
+              <div class="col-12 mt-2" v-if="typeIdNumber == 'customNumber'">
+                <label for="input-customNumber-label" class="form-label">กำหนดชื่อเลขระบุตัวตน</label>
+                <input
+                  type="text"
+                  class="form-control mb-3"
+                  id="input-customNumber-label"
+                  v-model="customName"
+                  autocomplete="off"
+                  @input="setFieldLocalStorage"
+                  placeholder="เช่น passport, หมายเลขคนต่างด้าว"
+                  required
+                />
+
+                <label for="input-customNumber" class="form-label">หมายเลขระบุตัวตน (ไม่ต้องขีด)</label>
                 <input
                   type="text"
                   class="form-control"
-                  id="input-passportNumber"
+                  id="input-customNumber"
                   v-model="idCardNumber"
                   autocomplete="off"
                   @input="setFieldLocalStorage"
-                  placeholder="Passport No."
+                  placeholder="กรอกหมายเลขระบุตัวตน"
                   required
                 />
               </div>
@@ -288,8 +296,8 @@
                 <p class="ml-1" style="color: #ccc;">{{ remark.length }} / 50 ตัวอักษร </p>
               </div>
 
-              <div class="col-12 mt-5" v-if="typeIdNumber == 'passportNumber'">
-                <label for="input-input-select-country" class="form-label">ประเทศ</label>
+              <div class="col-12 mt-5" v-if="typeIdNumber == 'customNumber'">
+                <label for="input-input-select-country" class="form-label">สัญชาติ</label>
                 <select
                   class="form-select form-select-lg"
                   id="input-select-country"
@@ -298,10 +306,7 @@
                   v-model="remark"
                   required
                 >
-                  <option value="" selected disabled>
-                    กรุณาเลือกประเทศ
-                  </option>
-
+                  <option value="ไทย" selected>ไทย</option>
                   <option value="ลาว">ลาว</option>
                   <option value="พม่า">พม่า</option>
                   <option value="กัมพูชา">กัมพูชา</option>
@@ -405,14 +410,15 @@ export default {
       if (this.gender == "" || !this.gender) return false;
       if (this.idCardNumber == "") return false;
       if (this.typeIdNumber == 'idCardNumber' && this.validId == false) return false;
-      if (this.typeIdNumber == 'passportNumber' && this.remark == '') return false;
+      if (this.typeIdNumber == 'customNumber' && this.customName == '') return false;
+      if (this.typeIdNumber == 'customNumber' && this.remark == '') return false;
       if (this.compairMobile == false) return false;
       return true;
     },
   },
   mounted() {
     window.scrollTo(0, 0);
-    let userForm = localStorage.getItem("form");
+    let userForm = localStorage.getItem("form2");
     if (userForm) {
       userForm = JSON.parse(userForm);
       this.restoreForm(userForm);
@@ -424,7 +430,6 @@ export default {
     this.dateList = dateList;
     this.monthList = monthList;
     this.yearList = yearList;
-    // this.typeIdNumber = 'idCardNumber';
     this.groupOf = 'ทั่วไป'
     this.prefixList = prefixList;
     this.idCardNumberState = "start";
@@ -439,6 +444,7 @@ export default {
       monthList: [],
       yearList: [],
       typeIdNumber: 'idCardNumber',
+      customName: '',
       groupOf: 'ทั่วไป',
       prefix: "",
       firstName: "",
@@ -470,8 +476,9 @@ export default {
       this.setFieldLocalStorage()
     },
     selectTypeIdNumber(type) {
+      
       this.idCardNumber = ''
-      this.remark = ''
+      this.remark = type == 'idCardNumber' ? '' : 'ไทย'
       this.typeIdNumber = type
       this.setFieldLocalStorage()
     },
@@ -484,6 +491,7 @@ export default {
         firstName: this.firstName,
         lastName: this.lastName,
         idCardNumber: this.idCardNumber,
+        customName: this.customName,
         year: this.year,
         month: this.month,
         date: this.date,
@@ -494,7 +502,7 @@ export default {
         remark: this.remark
       };
       if (process.browser) {
-        localStorage.setItem("form", JSON.stringify(formPayload));
+        localStorage.setItem("form2", JSON.stringify(formPayload));
       }
     },
     restoreForm(form) {
@@ -510,7 +518,8 @@ export default {
         month,
         date,
         remark,
-        typeIdNumber
+        typeIdNumber,
+        customName,
       } = form;
 
       this.groupOf = groupOf ? groupOf : 'ทั่วไป'
@@ -518,6 +527,7 @@ export default {
       this.firstName = firstName ? firstName : ''
       this.lastName = lastName ? lastName : ''
       this.idCardNumber = idCardNumber ? idCardNumber : ''
+      this.customName = customName ? customName : ''
       this.year = year ? year : ''
       this.month = month ? month : ''
       this.date = date ? date : ''

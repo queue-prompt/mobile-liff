@@ -89,15 +89,17 @@ import { monthList } from '../../static/birthDate'
       }
     },
     mounted() {
-      const getFormLocal = JSON.parse(localStorage.getItem('form'))
+      const getFormLocal = JSON.parse(localStorage.getItem('form2'))
 
       if(getFormLocal.typeIdNumber == 'idCardNumber') {
         return this.typeIdNumber = 'เลขบัตรประชาชน'
       }
 
-      if(getFormLocal.typeIdNumber == 'passportNumber') {
-        return this.typeIdNumber = 'เลขหนังสือเดินทาง'
-      } 
+      if(getFormLocal.typeIdNumber == 'customNumber' && getFormLocal.customName !== '') {
+        return this.typeIdNumber = getFormLocal.customName
+      } else {
+        return this.typeIdNumber = 'หนังสือเดินทาง/หมายเลขประจำตัว'
+      }
     },
     data() {
       return {
