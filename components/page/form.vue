@@ -384,6 +384,7 @@ export default {
       if (this.idCardNumber == "") return false;
       if (this.compairMobile == false) return false;
       if (this.validId == false) return false;
+
       return true;
     },
   },
@@ -562,6 +563,7 @@ export default {
         if (!this.validId) return
       }
 
+
       const tranformMonth = this.date < 10 ? `0${this.date}` : this.date;
       const birthDateTh = `${this.year}-${this.month}-${tranformMonth}`;
       const birthDate = `${parseInt(this.year) - 543}-${
@@ -593,7 +595,7 @@ export default {
 
       const self = this
       setTimeout(function () {
-        if(self.identityType === 0 && self.validId) {
+        if(self.validId) {
           const myModalEl = document.getElementById("md-confirm-form");
           myModalEl.classList.add("modal-show");
         }
