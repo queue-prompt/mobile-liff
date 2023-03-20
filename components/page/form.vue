@@ -407,6 +407,7 @@ export default {
     this.prefixList = prefixList;
     this.idCardNumberState = "start";
     this.remark = this.organizationData.entityId == this.mockEntityId ? 'ไทย' : ''
+    this.identityType =  this.organizationData.identityType || 0
     this.validateInputForm();
   },
   data() {

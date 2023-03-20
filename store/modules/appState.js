@@ -105,7 +105,8 @@ const appStateModule = {
               console.log('identityType is null or undefined')
               entityData['identityType'] = 0
             }
-  
+
+            
             commit('setState', { key: 'organizationData', payload: entityData })
             resolve(true)
           }
