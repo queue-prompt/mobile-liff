@@ -104,7 +104,7 @@ export default {
   },
   computed: {
     identityType() {
-      return this.$store.state.appState.organizationData.identityType;
+      return this.$store.state.appState?.organizationData?.identityType || 0;
     },
     myReserveListVuex() {
       return this.$store.state.myReserve.myReserveList;
