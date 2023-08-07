@@ -49,7 +49,7 @@
                 <input
                   class="form-control"
                   type="text"
-                  placeholder="เลขบัตรประชาชน(ไม่ต้องขีด)"
+                  :placeholder="identityType === 0 ? เลขบัตรประชาชน(ไม่ต้องขีด) : identityType"
                   v-model="searchString"
                   @change="inputSearch"
                 />
@@ -103,6 +103,9 @@ export default {
     SplashFooter,
   },
   computed: {
+    identityType() {
+      return this.$store.state.appState.organizationData.identityType;
+    },
     myReserveListVuex() {
       return this.$store.state.myReserve.myReserveList;
     },
