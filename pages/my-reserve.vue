@@ -49,7 +49,7 @@
                 <input
                   class="form-control"
                   type="text"
-                  :placeholder="identityType === 0 ? เลขบัตรประชาชน(ไม่ต้องขีด) : identityType"
+                  :placeholder="identityType === 0 ? 'เลขบัตรประชาชน(ไม่ต้องขีด)' : identityType"
                   v-model="searchString"
                   @change="inputSearch"
                 />
