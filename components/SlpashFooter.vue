@@ -2,7 +2,7 @@
   <div class="splash-footer" @click="skipEntityShutdown">
     © 2021 Powered by คิวพร้อม.com
     <br />
-    <span style="color: gray; font-size: 0.9rem">v1.2.2</span>
+    <span style="color: gray; font-size: 0.9rem">v1.2.3</span>
   </div>
 </template>
 

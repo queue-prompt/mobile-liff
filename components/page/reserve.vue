@@ -190,6 +190,7 @@ export default {
       userIdVuex: (state) => state.appState.userId,
       timeslotListVuex: (state) => state.reserve.timeslotList,
       userFormVuex: (state) => state.appState.user,
+      diff_ms: (state) => state.appState.diff_ms,
     }),
     dateReserveVuex() {
       const reserveMode = this.entityDataVuex.reserveMode  == 1 ? 1 : 0
@@ -306,9 +307,11 @@ export default {
 
       this.reserveTime = "";
     },
-    checkModeAdvance() {
-      const today = dayjs();
-      const timestamp = dayjs(this.reserveDate);
+    async checkModeAdvance() {
+      const today = dayjs().add(this.diff_ms, 'ms');
+
+      const transformReserveDate = `${this.reserveDate}T09:00:00`
+      const timestamp = dayjs(transformReserveDate)
       const timeDiffDay = timestamp.diff(today, "day");
       const reserveValue = this.entityDataVuex.reserveValue ? this.entityDataVuex.reserveValue : 1
 
@@ -345,13 +348,13 @@ export default {
       this.validateReserve = false;
       return true;
     },
-    checkDateRange() {
+    async checkDateRange() {
       this.reserveTime = "";
 
       const reserveMode = this.entityDataVuex.reserveMode  == 1 ? 1 : 0
 
       if(reserveMode == 0) {
-        return this.checkModeAdvance()
+        return await this.checkModeAdvance()
       }
 
       if(reserveMode == 1) {
@@ -368,7 +371,7 @@ export default {
         return;
       }
 
-      const inDateRange = this.checkDateRange();
+      const inDateRange = await this.checkDateRange();
 
       if (!inDateRange) return;
       this.loading = true;

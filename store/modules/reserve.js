@@ -176,7 +176,7 @@ const reserveModule = {
       commit('setState', { key: 'reserveToken', payload: '' })
       commit('setState', { key: 'reserveQueue', payload: {} })
       commit('setState', { key: 'register', payload: {} })
-    }
+    },
   },
   getters: {}
 };

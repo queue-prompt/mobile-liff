@@ -30,6 +30,8 @@ const appStateModule = {
 
     entityShutdown: false,
     entityShutdownText: '',
+
+    diff_ms: 0
   },
   mutations: {
     setState(state, { key, payload }) {
@@ -69,6 +71,7 @@ const appStateModule = {
 
         await dispatch('fetchServerOpenTime')
         await dispatch('fetchDateReserve')
+        await dispatch('fetchCurrentTimestamp')
 
         dispatch('checkEntity')
 
@@ -152,6 +155,20 @@ const appStateModule = {
       })
 
       return p
+    },
+
+    async fetchCurrentTimestamp(context) {
+      const { state, commit } = context
+      const response =  await axiosApi.get(`/server/opentime`)
+      if(response.status = 200) {
+        const data = response.data
+
+        const serverTimeStamp = data.timestamp
+        const localTimestamp = new Date().valueOf()
+        
+        const diff = serverTimeStamp - localTimestamp
+        commit('setState', { key: 'diff_ms', payload: diff })
+      }
     },
 
     fetchDateReserve(context) {
